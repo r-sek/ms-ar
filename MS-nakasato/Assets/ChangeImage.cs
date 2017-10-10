@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
-public class changeimage : MonoBehaviour {
+
+public class ChangeImage : MonoBehaviour {
 	public string BASE_TEXTURE;
 	public int i = 0;
 
@@ -15,17 +16,13 @@ public class changeimage : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 	}
-	public void chaged(){
-		SpriteRenderer rende = gameObject.GetComponent<SpriteRenderer> ();
-		rende.sprite = image2;
-	}
 	public void texturechange(){
 		i++;
 		if (i > 5) {
 			i = 1;
 		}
 		BASE_TEXTURE = Application.temporaryCachePath;
-		GameObject cube = GameObject.FindGameObjectWithTag ("test");
+		GameObject cube = GameObject.FindGameObjectWithTag ("target");
 		//Texture[] textures = Resources.LoadAll<Texture>(BASE_TEXTURE);
 		Texture2D textures = new Texture2D(0,0);
 		textures.LoadImage(LoadBin(BASE_TEXTURE + "/" + i + ".png"));
@@ -38,7 +35,7 @@ public class changeimage : MonoBehaviour {
 			i = 5;
 		}
 		BASE_TEXTURE = Application.temporaryCachePath;
-		GameObject cube = GameObject.FindGameObjectWithTag ("test");
+		GameObject cube = GameObject.FindGameObjectWithTag ("target");
 		//Texture[] textures = Resources.LoadAll<Texture>(BASE_TEXTURE);
 		Texture2D textures = new Texture2D(0,0);
 		textures.LoadImage (LoadBin (BASE_TEXTURE + "/" + i + ".png"));

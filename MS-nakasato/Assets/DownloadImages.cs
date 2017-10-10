@@ -4,7 +4,7 @@ using UnityEngine.Networking;
 using UnityEngine;
 using System.IO;
 
-public class downloadScript : MonoBehaviour {
+public class DownloadImages : MonoBehaviour {
 
 	//private string path = "Assets/Resources/textures/ai.jpg";
 	// Use this for initialization
