@@ -30,3 +30,6 @@ sysinfo.txt
 
 # Mac
 .DS_Store
+
+#Editor
+/.idea/
