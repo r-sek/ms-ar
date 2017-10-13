@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
@@ -8,23 +9,45 @@ using UnityEngine.UI;
 
 public class PostData : MonoBehaviour {
     private const string SERVER_URL = "http://superkuma.net/postData";
-    private Canvas canvas;
+
+    private List<string> fileList;
+    private string text = "";
 
     // Use this for initialization
     void Start() {
-        canvas = GetComponent<Canvas>();
         var btn = GameObject.Find("Canvas/SubmitBtn").GetComponent<Button>();
-
-//        var btn = canvas.GetComponentInChildren<Button>();
+        var inputField = GameObject.Find("Canvas/InputField").GetComponent<InputField>();
+        
+        
+        var path = getDirPath();
+        fileList = GetFilePathList(path);
         btn.onClick.AddListener(() => { StartCoroutine(SendData()); });
+        inputField.onEndEdit.AddListener(s => {
+            text = s;
+        });
+    }
+
+
+    // Update is called once per frame
+    void Update() {
+    }
+
+    private byte[] GetBytesFromMedia(string path) {
+        using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read)) {
+            using (var bin = new BinaryReader(fs)) {
+                return bin.ReadBytes((int) bin.BaseStream.Length);
+            }
+        }
     }
 
     IEnumerator SendData() {
-        var text = "";
-        var path = getDirPath();
-        path = GetFilePath(path);
-        var bytes = GetBytesFromMedia(path);
-        
+    
+        // todo: 暫定 1番目取得
+        var filepath = fileList[0];
+
+        var bytes = GetBytesFromMedia(filepath);
+
+        Debug.Log(text);
         Debug.Log(bytes);
         var formdata = new WWWForm();
         if (text != "") {
@@ -47,19 +70,6 @@ public class PostData : MonoBehaviour {
         }
     }
 
-    // Update is called once per frame
-    void Update() {
-    }
-
-    private byte[] GetBytesFromMedia(string path) {
-
-        using (var fs = new FileStream(path,FileMode.Open,FileAccess.Read)) {
-            using (var bin = new BinaryReader(fs)) {
-                return bin.ReadBytes((int) bin.BaseStream.Length);
-            }
-        }
-    }
-
     private string getDirPath() {
 #if UNITY_ANDROID
         using (var p = new AndroidJavaClass("jp.ac.hal.unityandroidplugin.FileAccessKt")) {
@@ -73,12 +83,10 @@ public class PostData : MonoBehaviour {
 #endif
     }
 
-    private string GetFilePath(string dirPath) {
+    private List<string> GetFilePathList(string dirPath) {
         var patterns = new[] {".jpg", ".png"};
         var list = Directory.EnumerateFiles(dirPath, "*.*", SearchOption.AllDirectories)
             .Where(file => patterns.Any(pattern => file.ToLower().EndsWith(pattern))).ToList();
-        return list[0];
+        return list;
     }
-
-
 }
