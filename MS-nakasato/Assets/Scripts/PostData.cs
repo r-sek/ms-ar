@@ -12,19 +12,35 @@ public class PostData : MonoBehaviour {
 
     private List<string> fileList;
     private string text = "";
-
+    
     // Use this for initialization
     void Start() {
+
+        Screen.orientation = ScreenOrientation.Portrait;
+        
         var btn = GameObject.Find("Canvas/SubmitBtn").GetComponent<Button>();
         var inputField = GameObject.Find("Canvas/InputField").GetComponent<InputField>();
-        
-        
+
+        var returnBtn = GameObject.Find("Canvas/ReturnBtn").GetComponent<Button>();
+        var image = GameObject.Find("Canvas/Image").GetComponent<Image>();
         var path = getDirPath();
         fileList = GetFilePathList(path);
-        btn.onClick.AddListener(() => { StartCoroutine(SendData()); });
+        
+        btn.onClick.AddListener(() => {
+            StartCoroutine(SendData());
+        });
+        
         inputField.onEndEdit.AddListener(s => {
             text = s;
         });
+        inputField.onValueChanged.AddListener(s => {
+            inputField.text = s;
+        });
+        returnBtn.onClick.AddListener(() => {
+            // メイン画面に戻る
+        });
+        
+        
     }
 
 
@@ -41,7 +57,6 @@ public class PostData : MonoBehaviour {
     }
 
     IEnumerator SendData() {
-    
         // todo: 暫定 1番目取得
         var filepath = fileList[0];
 
