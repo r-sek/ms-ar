@@ -72,7 +72,9 @@ namespace Vuforia
         {
             Renderer[] rendererComponents = GetComponentsInChildren<Renderer>(true);
             Collider[] colliderComponents = GetComponentsInChildren<Collider>(true);
-
+			nextBtn = GameObject.FindGameObjectWithTag ("nextBtn");
+			changeimage = nextBtn.GetComponent<ChangeImage> ();
+			changeimage.texturechange();
             // Enable rendering:
             foreach (Renderer component in rendererComponents)
             {
@@ -91,12 +93,9 @@ namespace Vuforia
 
         private void OnTrackingLost()
         {
-            Renderer[] rendererComponents = GetComponentsInChildren<Renderer>(true);
-            Collider[] colliderComponents = GetComponentsInChildren<Collider>(true);
-			nextBtn = GameObject.FindGameObjectWithTag ("nextBtn");
-			changeimage = nextBtn.GetComponent<ChangeImage> ();
-			changeimage.texturechange();
-            // Disable rendering:
+			Renderer[] rendererComponents = GetComponentsInChildren<Renderer> (true);
+			Collider[] colliderComponents = GetComponentsInChildren<Collider> (true);
+			// Disable rendering:
             foreach (Renderer component in rendererComponents)
             {
                 component.enabled = false;
