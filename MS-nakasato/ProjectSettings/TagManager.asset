@@ -6,6 +6,7 @@ TagManager:
   tags:
   - target
   - nextBtn
+  - message
   layers:
   - Default
   - TransparentFX

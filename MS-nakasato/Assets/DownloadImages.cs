@@ -11,7 +11,7 @@ public class DownloadImages : MonoBehaviour {
 	// index
 	private string cae ="";
 	const string serve = "http://superkuma.net/textures/";
-
+	const string p_url = "http://superkuma.net/DB";
 	void Start () {
 		StartCoroutine (GetFile ());
 	}
@@ -47,21 +47,46 @@ public class DownloadImages : MonoBehaviour {
 	}
 
 	IEnumerator GetFile(){
-		for (int i = 1; i < 6; i++) {
-			string path = serve + i +".png";
+		var msg = new List<string>();
+		var img = new List<string>();
+		WWW result = new WWW(p_url);
+		yield return result;
+		if (result.error == null) {
+			JSONObject json = new JSONObject (result.text);
+			int rowCount = json.Count;
+			for (int i = 0;i<json.Count; i++) {
+				JSONObject jsoncur = json[i];
+				JSONObject jsonmsg = jsoncur.GetField ("message");
+				JSONObject jsonimg = jsoncur.GetField ("file");
+				msg.Add(jsonmsg.str);
+				img.Add(jsonimg.str);
+				Debug.Log (jsonmsg.str);
+			}
+		}
+		Debug.Log (msg.Count);
+		for(int i = 0;i<msg.Count;i++){
+			string path = serve + img [i];
 			using (UnityWebRequest www = UnityWebRequest.Get (path)) {
-				yield return www.Send ();
-				if (www.isError) {
+				yield return www.Send();
+				if (www.isNetworkError) {
 				} else {
-					//Texture tex = readByBinary (www.downloadHandler.data);
-					//Renderer renderer = this.GetComponent<Renderer>();
-					//renderer.material.mainTexture = tex;
-					print (Application.temporaryCachePath + "/" + i + ".png");
-
 					cae = Application.temporaryCachePath;
-					File.WriteAllBytes (cae + "/" + i + ".png", www.downloadHandler.data);
+				    File.WriteAllBytes (cae + "/" + i + ".png", www.downloadHandler.data);
 				}
 			}
 		}
-	}
+//		for (int i = 1; i < 6; i++) {
+//			string path = serve + i +".png";
+//			using (UnityWebRequest www = UnityWebRequest.Get (path)) {
+//				yield return www.Send ();
+//				if (www.isNetworkError) {
+//				} else {
+//					print (Application.temporaryCachePath + "/" + i + ".png");
+//					cae = Application.temporaryCachePath;
+//					File.WriteAllBytes (cae + "/" + i + ".png", www.downloadHandler.data);
+//				}
+//			}
+//		}
+
+	}	
 }

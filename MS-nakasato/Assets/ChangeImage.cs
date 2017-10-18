@@ -24,14 +24,20 @@ public class ChangeImage : MonoBehaviour {
 		BASE_TEXTURE = Application.temporaryCachePath;
 		GameObject cube = GameObject.FindGameObjectWithTag ("target");
 		//Texture[] textures = Resources.LoadAll<Texture>(BASE_TEXTURE);
-		Texture2D textures = new Texture2D(0,0);
-		textures.LoadImage(LoadBin(BASE_TEXTURE + "/" + i + ".png"));
+		Texture2D textures = new Texture2D (0, 0);
+		textures.LoadImage (LoadBin (BASE_TEXTURE + "/" + i + ".png"));
 		Renderer renderer = cube.GetComponent<Renderer> ();
 		renderer.material.mainTexture = textures;
+		GameObject message = GameObject.FindGameObjectWithTag ("message");
+		TextMesh tm = message.GetComponent<TextMesh> ();
+		StreamReader textfile = new StreamReader(BASE_TEXTURE + "/"  +i+ ".txt");
+		string readtext = textfile.ReadToEnd ();
+		tm.text = readtext;
+		textfile.Close ();
 	}
 	public void textureback(){
 		i--;
-		if (i <= 1) {
+		if (i <= 0) {
 			i = 5;
 		}
 		BASE_TEXTURE = Application.temporaryCachePath;
@@ -41,7 +47,6 @@ public class ChangeImage : MonoBehaviour {
 		textures.LoadImage (LoadBin (BASE_TEXTURE + "/" + i + ".png"));
 		Renderer renderer = cube.GetComponent<Renderer> ();
 		renderer.material.mainTexture = textures;
-
 	}
 	byte[] LoadBin(string path){
 		FileStream fs = new FileStream(path, FileMode.Open);
