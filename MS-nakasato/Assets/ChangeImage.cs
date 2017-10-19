@@ -6,47 +6,48 @@ using System.IO;
 public class ChangeImage : MonoBehaviour {
 	public string BASE_TEXTURE;
 	public int i = 0;
-
+	public DownloadImages downloadimages;
 	public Sprite image2;
+	public TextMesh messagetm;
+	public Renderer cuberenderer;
 
 	// Use this for initialization
 	void Start () {
+		GameObject arcamera = GameObject.FindGameObjectWithTag ("arcamera");
+		downloadimages =  arcamera.GetComponent<DownloadImages>();
+		GameObject message = GameObject.FindGameObjectWithTag ("message");
+		messagetm = message.GetComponent<TextMesh> ();
+		GameObject cube = GameObject.FindGameObjectWithTag ("target");
+		cuberenderer = cube.GetComponent<Renderer> ();
+		BASE_TEXTURE = Application.temporaryCachePath;
+
 	}
 
 	// Update is called once per frame
 	void Update () {
 	}
 	public void texturechange(){
-		i++;
-		if (i > 5) {
-			i = 1;
+		if (i > downloadimages.getMaxrange()-1) {
+			i = 0;
 		}
-		BASE_TEXTURE = Application.temporaryCachePath;
-		GameObject cube = GameObject.FindGameObjectWithTag ("target");
 		//Texture[] textures = Resources.LoadAll<Texture>(BASE_TEXTURE);
 		Texture2D textures = new Texture2D (0, 0);
 		textures.LoadImage (LoadBin (BASE_TEXTURE + "/" + i + ".png"));
-		Renderer renderer = cube.GetComponent<Renderer> ();
-		renderer.material.mainTexture = textures;
-		GameObject message = GameObject.FindGameObjectWithTag ("message");
-		TextMesh tm = message.GetComponent<TextMesh> ();
-		StreamReader textfile = new StreamReader(BASE_TEXTURE + "/"  +i+ ".txt");
-		string readtext = textfile.ReadToEnd ();
-		tm.text = readtext;
-		textfile.Close ();
+		cuberenderer.material.mainTexture = textures;
+		messagetm.text = downloadimages.getMessage(i);
+		i++;
 	}
 	public void textureback(){
 		i--;
 		if (i <= 0) {
-			i = 5;
+			i = downloadimages.getMaxrange()-1;
 		}
-		BASE_TEXTURE = Application.temporaryCachePath;
-		GameObject cube = GameObject.FindGameObjectWithTag ("target");
 		//Texture[] textures = Resources.LoadAll<Texture>(BASE_TEXTURE);
 		Texture2D textures = new Texture2D(0,0);
 		textures.LoadImage (LoadBin (BASE_TEXTURE + "/" + i + ".png"));
-		Renderer renderer = cube.GetComponent<Renderer> ();
-		renderer.material.mainTexture = textures;
+		cuberenderer.material.mainTexture = textures;
+		messagetm.text = downloadimages.getMessage (i);
+		i++;
 	}
 	byte[] LoadBin(string path){
 		FileStream fs = new FileStream(path, FileMode.Open);
@@ -56,3 +57,4 @@ public class ChangeImage : MonoBehaviour {
 		return buf;
 	}
 }
+

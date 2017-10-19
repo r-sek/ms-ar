@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.Networking;
+using System.Linq;
 using UnityEngine;
 using System.IO;
 
@@ -12,10 +13,10 @@ public class DownloadImages : MonoBehaviour {
 	private string cae ="";
 	const string serve = "http://superkuma.net/textures/";
 	const string p_url = "http://superkuma.net/DB";
-	void Start () {
+	private List<string> messages;
+	void Start(){
 		StartCoroutine (GetFile ());
 	}
-
 	// Update is called once per frame
 	void Update () {
 		//Texture tex = readByBinary (readPngFile(path));
@@ -47,10 +48,12 @@ public class DownloadImages : MonoBehaviour {
 	}
 
 	IEnumerator GetFile(){
+		messages = new List<string>();
 		var msg = new List<string>();
 		var img = new List<string>();
 		WWW result = new WWW(p_url);
 		yield return result;
+		Debug.Log (result.text);
 		if (result.error == null) {
 			JSONObject json = new JSONObject (result.text);
 			int rowCount = json.Count;
@@ -58,14 +61,15 @@ public class DownloadImages : MonoBehaviour {
 				JSONObject jsoncur = json[i];
 				JSONObject jsonmsg = jsoncur.GetField ("message");
 				JSONObject jsonimg = jsoncur.GetField ("file");
-				msg.Add(jsonmsg.str);
+				messages.Add(jsonmsg.str);
 				img.Add(jsonimg.str);
 				Debug.Log (jsonmsg.str);
 			}
 		}
-		Debug.Log (msg.Count);
-		for(int i = 0;i<msg.Count;i++){
+		Debug.Log (messages.Count);
+		for(int i = 0;i<messages.Count;i++){
 			string path = serve + img [i];
+			Debug.Log (serve+img[i]+"To"+cae+"/"+i+".png");
 			using (UnityWebRequest www = UnityWebRequest.Get (path)) {
 				yield return www.Send();
 				if (www.isNetworkError) {
@@ -87,6 +91,12 @@ public class DownloadImages : MonoBehaviour {
 //				}
 //			}
 //		}
-
-	}	
+	}
+	public string getMessage(int i){
+		return messages[i];
+	}
+	public int getMaxrange(){
+		return messages.Count ();
+	}
 }
+
