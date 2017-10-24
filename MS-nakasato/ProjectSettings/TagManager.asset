@@ -8,6 +8,7 @@ TagManager:
   - nextBtn
   - message
   - arcamera
+  - canvas
   layers:
   - Default
   - TransparentFX
