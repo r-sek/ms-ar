@@ -72,6 +72,10 @@ public class PostData : MonoBehaviour {
     private IEnumerator LoadTexture2D() {
         foreach (var path in fileList) {
             var tex = new byte[0];
+
+            if (!File.Exists(path)) {
+                yield break;
+            }
 #if UNITY_ANDROID
             using (var p = new AndroidJavaClass("jp.ac.hal.unityandroidplugin.FileAccessKt")) {
                 using (var unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer")) {
@@ -83,24 +87,20 @@ public class PostData : MonoBehaviour {
                 }
             }
 #else
-            if (!File.Exists(path)) {
-                yield break;
-            }
             using (var www = new WWW(FILE_HEADER + path)) {
                 while (!www.isDone) {
                     yield return new WaitForEndOfFrame();
                 }
-                var tex = www.bytes;
-    #endif
+                 tex = www.bytes;
+            }
+#endif
             var t2D = new Texture2D(2, 2, TextureFormat.ATC_RGB4, false);
             t2D.LoadImage(tex);
             t2D.Apply(true, true);
             var sprite = GetSpriteFromTexture2D(t2D);
             sprites.Add(sprite);
-//            }
         }
         SetImage();
-        yield break;
     }
 
     private IEnumerator SendData() {
