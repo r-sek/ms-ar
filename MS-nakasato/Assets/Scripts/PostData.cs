@@ -61,14 +61,6 @@ public class PostData : MonoBehaviour {
     void Update() {
     }
 
-    private byte[] GetBytesFromMedia(string path) {
-        using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read)) {
-            using (var bin = new BinaryReader(fs)) {
-                return bin.ReadBytes((int) bin.BaseStream.Length);
-            }
-        }
-    }
-
     private IEnumerator LoadTexture2D() {
         foreach (var path in fileList) {
             var tex = new byte[0];
@@ -97,7 +89,7 @@ public class PostData : MonoBehaviour {
             var t2D = new Texture2D(2, 2, TextureFormat.ATC_RGB4, false);
             t2D.LoadImage(tex);
             t2D.Apply(true, true);
-            var sprite = GetSpriteFromTexture2D(t2D);
+            var sprite = Utilities.GetSpriteFromTexture2D(t2D);
             sprites.Add(sprite);
         }
         SetImage();
@@ -107,7 +99,7 @@ public class PostData : MonoBehaviour {
         // todo: 暫定 1番目取得
         filepath = fileList[0];
 
-        var bytes = GetBytesFromMedia(filepath);
+        var bytes = Utilities.LoadbinaryBytes(filepath);
         var formdata = new WWWForm();
 
         formdata.AddField("name", "gest");
@@ -149,14 +141,6 @@ public class PostData : MonoBehaviour {
                 break;
             }
         }
-    }
-
-    private Sprite GetSpriteFromTexture2D(Texture2D t2D) {
-        Sprite sprite = null;
-        if (t2D) {
-            sprite = Sprite.Create(t2D, new Rect(0, 0, t2D.width, t2D.height), Vector2.zero);
-        }
-        return sprite;
     }
 
     private string GetDirPath() {
