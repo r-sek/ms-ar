@@ -3,16 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Principal;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-#if NETFX_CORE
- using System.Threading.Tasks;
- using Windows.Storage;
- using Windows.Storage.Streams;
- #endif
+
 public class PostData : MonoBehaviour {
     private const string SERVER_URL = "http://superkuma.net/postData";
     private List<Sprite> sprites;
@@ -40,12 +35,8 @@ public class PostData : MonoBehaviour {
 
         btn.onClick.AddListener(() => { StartCoroutine(SendData()); });
 
-        inputField.onEndEdit.AddListener(s => {
-            text = s;
-        });
-        inputField.onValueChanged.AddListener(s => {
-            inputField.text = s;
-        });
+        inputField.onEndEdit.AddListener(s => { text = s; });
+        inputField.onValueChanged.AddListener(s => { inputField.text = s; });
         returnBtn.onClick.AddListener(() => {
             // メイン画面に戻る
             SceneManager.LoadScene("MainView");
@@ -68,6 +59,14 @@ public class PostData : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
+    }
+
+    private byte[] GetBytesFromMedia(string path) {
+        using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read)) {
+            using (var bin = new BinaryReader(fs)) {
+                return bin.ReadBytes((int) bin.BaseStream.Length);
+            }
+        }
     }
 
     private IEnumerator LoadTexture2D() {
@@ -98,7 +97,7 @@ public class PostData : MonoBehaviour {
             var t2D = new Texture2D(2, 2, TextureFormat.ATC_RGB4, false);
             t2D.LoadImage(tex);
             t2D.Apply(true, true);
-            var sprite = Utilities.GetSpriteFromTexture2D(t2D);
+            var sprite = GetSpriteFromTexture2D(t2D);
             sprites.Add(sprite);
         }
         SetImage();
@@ -108,7 +107,7 @@ public class PostData : MonoBehaviour {
         // todo: 暫定 1番目取得
         filepath = fileList[0];
 
-        var bytes = Utilities.LoadbinaryBytes(filepath);
+        var bytes = GetBytesFromMedia(filepath);
         var formdata = new WWWForm();
 
         formdata.AddField("name", "gest");
@@ -152,10 +151,16 @@ public class PostData : MonoBehaviour {
         }
     }
 
+    private Sprite GetSpriteFromTexture2D(Texture2D t2D) {
+        Sprite sprite = null;
+        if (t2D) {
+            sprite = Sprite.Create(t2D, new Rect(0, 0, t2D.width, t2D.height), Vector2.zero);
+        }
+        return sprite;
+    }
+
     private string GetDirPath() {
-#if UNITY_WSA
-        return Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
-#elif UNITY_ANDROID
+#if UNITY_ANDROID
         using (var p = new AndroidJavaClass("jp.ac.hal.unityandroidplugin.FileAccessKt")) {
             return p.CallStatic<string>("getFilePath");
         }
@@ -171,7 +176,7 @@ public class PostData : MonoBehaviour {
         var patterns = new[] {".jpg", ".png", ".mp4"};
         var list = Directory.EnumerateFiles(dirPath, "*.*", SearchOption.AllDirectories)
             .Where(file => patterns.Any(pattern => file.ToLower().EndsWith(pattern)) &&
-                           !(file.IndexOf("/.thumbnails/", StringComparison.Ordinal) > 0)).OrderByDescending(file=> new FileInfo(file).CreationTime)
+                           !(file.IndexOf("/.thumbnails/", StringComparison.Ordinal) > 0))
             .Skip(index).Take(20).ToList();
         return list;
     }
