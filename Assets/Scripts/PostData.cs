@@ -161,6 +161,7 @@ public class PostData : MonoBehaviour {
         var list = Directory.EnumerateFiles(dirPath, "*.*", SearchOption.AllDirectories)
             .Where(file => patterns.Any(pattern => file.ToLower().EndsWith(pattern)) &&
                            !(file.IndexOf("/.thumbnails/", StringComparison.Ordinal) > 0))
+            .OrderByDescending(File.GetLastWriteTime)
             .Skip(index).Take(20).ToList();
         return list;
     }
