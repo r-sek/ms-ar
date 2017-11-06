@@ -5,31 +5,26 @@ using UnityEngine;
 using System.IO;
 
 public class DownloadImages : MonoBehaviour {
-    //private string path = "Assets/Resources/textures/ai.jpg";
-    // Use this for initialization
-    // index
     private const string SERVER_URL = "http://superkuma.net/textures/";
-
     private const string DB_SERVER_URL = "http://superkuma.net/DB";
-    private List<string> messages;
+    private List<Love> loves;
     private int count;
     private Renderer cubeRenderer;
     private TextMesh messageTextMesh;
 
     void Start() {
         count = 0;
-         cubeRenderer = GameObject.FindGameObjectWithTag("target").GetComponent<Renderer>();
-         messageTextMesh = GameObject.FindGameObjectWithTag("message").GetComponent<TextMesh>();
+        loves = new List<Love>();
+        cubeRenderer = GameObject.FindGameObjectWithTag("target").GetComponent<Renderer>();
+        messageTextMesh = GameObject.FindGameObjectWithTag("message").GetComponent<TextMesh>();
         StartCoroutine(GetFile());
     }
-
+    
     // Update is called once per frame
     void Update() {
     }
 
     IEnumerator GetFile() {
-        messages = new List<string>();
-        var img = new List<string>();
         var result = new WWW(DB_SERVER_URL);
         yield return result;
         Debug.Log(result.text);
@@ -39,15 +34,13 @@ public class DownloadImages : MonoBehaviour {
                 var jsoncur = json[i];
                 var jsonmsg = jsoncur.GetField("message");
                 var jsonimg = jsoncur.GetField("file");
-                messages.Add(jsonmsg.str);
-                img.Add(jsonimg.str);
+                loves.Add(new Love(jsonmsg.str,jsonimg.str));
                 Debug.Log(jsonmsg.str);
             }
         }
-        Debug.Log(messages.Count);
-        for (var i = 0; i < messages.Count; i++) {
-            var path = SERVER_URL + img[i];
-            Debug.Log(SERVER_URL + img[i] + "To" + Application.temporaryCachePath + "/" + i + ".png");
+        
+        for (var i = 0; i < loves.Count; i++) {
+            var path = SERVER_URL + loves[i].ImageName;
             using (var www = UnityWebRequest.Get(path)) {
                 yield return www.Send();
                 if (www.isNetworkError) {
@@ -58,15 +51,15 @@ public class DownloadImages : MonoBehaviour {
             }
         }
     }
+    
     public void Texturechange() {
-        if (count > messages.Count-1) {
+        if (count > loves.Count - 1) {
             count = 0;
         }
         var textures = new Texture2D(0, 0);
         textures.LoadImage(Utilities.LoadbinaryBytes(Application.temporaryCachePath + "/" + count + ".png"));
-
         cubeRenderer.material.mainTexture = textures;
-        messageTextMesh.text = messages[count];
+        messageTextMesh.text = loves[count].Message;
         count++;
     }
 }
