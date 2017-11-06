@@ -41,6 +41,7 @@ public class DownloadImages : MonoBehaviour {
         
         for (var i = 0; i < loves.Count; i++) {
             var path = SERVER_URL + loves[i].ImageName;
+            if (File.Exists(path)) continue;
             using (var www = UnityWebRequest.Get(path)) {
                 yield return www.Send();
                 if (www.isNetworkError) {
