@@ -48,7 +48,10 @@ public class PostData : MonoBehaviour {
         srect.normalizedPosition = new Vector2(0, 0);
         for (var i = 0; i < fileList.Count; i++) {
             var item = Instantiate(Resources.Load("Prefab/AA")) as GameObject;
+            item.GetComponent<ImageObject>().Filepath = fileList[i];
+
             item.transform.SetParent(content, false);
+            
         }
 
         StartCoroutine(LoadTexture2D());
@@ -127,14 +130,23 @@ public class PostData : MonoBehaviour {
         foreach (var btn in content.GetComponentsInChildren<Button>()) {
             Debug.unityLogger.Log("sprite", sprites.Count);
             btn.GetComponent<Image>().sprite = sprites[0];
+            Debug.unityLogger.Log("btn", btn.GetComponent<ImageObject>().Filepath);
             btn.onClick.AddListener(() => {
                 ///ここ書いて
                 /// 
                 /// filepath に
-                /// 
-                /// 
-                /// 
-                /// 
+                //Debug.unityLogger.Log("touchImageTest", "1111");
+                var texture = new Texture2D(0,0);
+                texture.LoadImage(Utilities.LoadbinaryBytes(btn.GetComponent<ImageObject>().Filepath));
+                texture.Apply(true, true);
+                var img = GameObject.Find("Canvas/Image").GetComponent<Image>();
+                Debug.unityLogger.Log("img", img);
+                img.sprite = Utilities.GetSpriteFromTexture2D(texture);
+                img.preserveAspect = true;
+                img.SetNativeSize();
+
+                Destroy(texture);
+                //Destroy(img);
             });
             sprites.RemoveAt(0);
             if (sprites.Count == 0) {
@@ -157,7 +169,7 @@ public class PostData : MonoBehaviour {
     }
 
     private List<string> GetFilePathList(string dirPath) {
-        var patterns = new[] {".jpg", ".png", ".mp4"};
+        var patterns = new[] {".jpg", ".png"};
         var list = Directory.EnumerateFiles(dirPath, "*.*", SearchOption.AllDirectories)
             .Where(file => patterns.Any(pattern => file.ToLower().EndsWith(pattern)) &&
                            !(file.IndexOf("/.thumbnails/", StringComparison.Ordinal) > 0))
