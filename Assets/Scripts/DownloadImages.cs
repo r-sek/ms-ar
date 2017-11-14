@@ -65,10 +65,10 @@ public class DownloadImages : MonoBehaviour {
         var textures = new Texture2D(0, 0);
         textures.LoadImage(Utilities.LoadbinaryBytes(cacheImages[count]));
         var x = -spriteRenderer.bounds.center.x / spriteRenderer.bounds.size.x + 0.5f;
-         var y =    - spriteRenderer.bounds.center.x / spriteRenderer.bounds.size.x + 0.5f;
+        var y = -spriteRenderer.bounds.center.x / spriteRenderer.bounds.size.x + 0.5f;
         spriteRenderer.sprite =
             Sprite.Create(textures, new Rect(0, 0, textures.width, textures.height),
-                new Vector2(x,y));
+                new Vector2(x, y));
         messageTextMesh.text = loves[count].Message;
         count++;
     }
