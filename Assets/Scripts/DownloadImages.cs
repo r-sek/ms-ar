@@ -1,25 +1,27 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine.Networking;
-using UnityEngine;
 using System.IO;
+using UnityEngine;
+using UnityEngine.Networking;
 
 public class DownloadImages : MonoBehaviour {
     private const string SERVER_URL = "http://superkuma.net/textures/";
     private const string DB_SERVER_URL = "http://superkuma.net/DB";
     private List<Love> loves;
     private int count;
-    private Renderer cubeRenderer;
+    private SpriteRenderer spriteRenderer;
     private TextMesh messageTextMesh;
+    private List<string> cacheImages;
 
     void Start() {
         count = 0;
         loves = new List<Love>();
-        cubeRenderer = GameObject.FindGameObjectWithTag("target").GetComponent<Renderer>();
+        cacheImages = new List<string>();
+        spriteRenderer = GameObject.FindGameObjectWithTag("target").GetComponent<SpriteRenderer>();
         messageTextMesh = GameObject.FindGameObjectWithTag("message").GetComponent<TextMesh>();
         StartCoroutine(GetFile());
     }
-    
+
     // Update is called once per frame
     void Update() {
     }
@@ -34,33 +36,39 @@ public class DownloadImages : MonoBehaviour {
                 var jsoncur = json[i];
                 var jsonmsg = jsoncur.GetField("message");
                 var jsonimg = jsoncur.GetField("file");
-                loves.Add(new Love(jsonmsg.str,jsonimg.str));
+                loves.Add(new Love(jsonmsg.str, jsonimg.str));
                 Debug.Log(jsonmsg.str);
             }
         }
-        
-        for (var i = 0; i < loves.Count; i++) {
-            var path = SERVER_URL + loves[i].ImageName;
-            if (!File.Exists(path)) continue;
-            using (var www = UnityWebRequest.Get(path)) {
-                yield return www.Send();
-                if (www.isNetworkError) {
-                }
-                else {
-                    File.WriteAllBytes(Application.temporaryCachePath + "/" + i + ".png", www.downloadHandler.data);
-                    Debug.Log(path+"OK");
+
+        foreach (var love in loves) {
+            var url = SERVER_URL + love.ImageName;
+            var path = Application.temporaryCachePath + "/" + love.ImageName;
+            if (!File.Exists(path)) {
+                using (var www = UnityWebRequest.Get(url)) {
+                    yield return www.Send();
+                    if (www.isNetworkError) {
+                    }
+                    else {
+                        File.WriteAllBytes(path, www.downloadHandler.data);
+                    }
                 }
             }
+            cacheImages.Add(path);
         }
     }
-    
+
     public void Texturechange() {
-        if (count > loves.Count - 1) {
+        if (count > cacheImages.Count - 1) {
             count = 0;
         }
         var textures = new Texture2D(0, 0);
-        textures.LoadImage(Utilities.LoadbinaryBytes(Application.temporaryCachePath + "/" + count + ".png"));
-        cubeRenderer.material.mainTexture = textures;
+        textures.LoadImage(Utilities.LoadbinaryBytes(cacheImages[count]));
+        var x = -spriteRenderer.bounds.center.x / spriteRenderer.bounds.size.x + 0.5f;
+         var y =    - spriteRenderer.bounds.center.x / spriteRenderer.bounds.size.x + 0.5f;
+        spriteRenderer.sprite =
+            Sprite.Create(textures, new Rect(0, 0, textures.width, textures.height),
+                new Vector2(x,y));
         messageTextMesh.text = loves[count].Message;
         count++;
     }
