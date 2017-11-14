@@ -17,12 +17,11 @@ public class PostData : MonoBehaviour {
     private int index = 0;
     private const string FILE_HEADER = "file://";
     private string filepath = "";
+    private Texture2D postTexture;
 
-
-    // Use this for initialization
     void Start() {
         sprites = new List<Sprite>();
-
+           postTexture = new Texture2D(0,0);
         // 縦固定
         Screen.orientation = ScreenOrientation.Portrait;
 
@@ -46,12 +45,10 @@ public class PostData : MonoBehaviour {
         content.sizeDelta = new Vector2(200 * fileList.Count, 0);
         var srect = GameObject.Find("Canvas/Scroll View").GetComponent<ScrollRect>();
         srect.normalizedPosition = new Vector2(0, 0);
-        for (var i = 0; i < fileList.Count; i++) {
+        foreach (var s in fileList) {
             var item = Instantiate(Resources.Load("Prefab/AA")) as GameObject;
-            item.GetComponent<ImageObject>().Filepath = fileList[i];
-
+            item.GetComponent<ImageObject>().Filepath = s;
             item.transform.SetParent(content, false);
-            
         }
 
         StartCoroutine(LoadTexture2D());
@@ -89,7 +86,7 @@ public class PostData : MonoBehaviour {
                  tex = www.bytes;
             }
 #endif
-            var t2D = new Texture2D(2, 2, TextureFormat.ATC_RGB4, false);
+            var t2D = new Texture2D(0, 0);
             t2D.LoadImage(tex);
             t2D.Apply(true, true);
             var sprite = Utilities.GetSpriteFromTexture2D(t2D);
@@ -100,7 +97,6 @@ public class PostData : MonoBehaviour {
 
     private IEnumerator SendData() {
         // todo: 暫定 1番目取得
-        filepath = fileList[0];
 
         var bytes = Utilities.LoadbinaryBytes(filepath);
         var formdata = new WWWForm();
@@ -128,25 +124,17 @@ public class PostData : MonoBehaviour {
 
     private void SetImage() {
         foreach (var btn in content.GetComponentsInChildren<Button>()) {
-            Debug.unityLogger.Log("sprite", sprites.Count);
             btn.GetComponent<Image>().sprite = sprites[0];
-            Debug.unityLogger.Log("btn", btn.GetComponent<ImageObject>().Filepath);
             btn.onClick.AddListener(() => {
-                ///ここ書いて
-                /// 
-                /// filepath に
-                //Debug.unityLogger.Log("touchImageTest", "1111");
-                var texture = new Texture2D(0,0);
-                texture.LoadImage(Utilities.LoadbinaryBytes(btn.GetComponent<ImageObject>().Filepath));
-                texture.Apply(true, true);
+                filepath = btn.GetComponent<ImageObject>().Filepath;
+
+                postTexture.LoadImage(Utilities.LoadbinaryBytes(filepath));
+                postTexture.Apply(true, true);
                 var img = GameObject.Find("Canvas/Image").GetComponent<Image>();
                 Debug.unityLogger.Log("img", img);
-                img.sprite = Utilities.GetSpriteFromTexture2D(texture);
-                img.preserveAspect = true;
-                img.SetNativeSize();
-
-                Destroy(texture);
-                //Destroy(img);
+                img.sprite = Utilities.GetSpriteFromTexture2D(postTexture);
+                img.color = Color.white;
+                
             });
             sprites.RemoveAt(0);
             if (sprites.Count == 0) {
@@ -160,10 +148,7 @@ public class PostData : MonoBehaviour {
         using (var p = new AndroidJavaClass("jp.ac.hal.unityandroidplugin.FileAccessKt")) {
             return p.CallStatic<string>("getFilePath");
         }
-        using (var plugin = new AndroidJavaClass("jp.ac.hal.androidplugin.FileAccessKt")) {
-            return plugin.CallStatic<string>("FileAccess");
-        }
-#else 
+#else
         return Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
 #endif
     }
