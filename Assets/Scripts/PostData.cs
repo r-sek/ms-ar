@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using UniRx;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
@@ -18,6 +19,8 @@ public class PostData : MonoBehaviour {
     private const string FILE_HEADER = "file://";
     private string filepath = "";
     private Texture2D postTexture;
+    private byte[] postImageBytes;
+    private bool isbuttonClick = true;
 
     void Start() {
         sprites = new List<Sprite>();
@@ -97,8 +100,11 @@ public class PostData : MonoBehaviour {
 
     private IEnumerator SendData() {
         // todo: 暫定 1番目取得
-
+#if UNITY_ANDROID
+        var bytes = postImageBytes;
+#elif
         var bytes = Utilities.LoadbinaryBytes(filepath);
+#endif  
         var formdata = new WWWForm();
 
         formdata.AddField("name", "gest");
@@ -125,20 +131,22 @@ public class PostData : MonoBehaviour {
     private void SetImage() {
         foreach (var btn in content.GetComponentsInChildren<Button>()) {
             btn.GetComponent<Image>().sprite = sprites[0];
-            btn.onClick.AddListener(() => {
-                filepath = btn.GetComponent<ImageObject>().Filepath;
-
+            btn.OnClickAsObservable()
+                .TakeUntilDestroy(this)
+                .ThrottleFirst(TimeSpan.FromMilliseconds(10000))
+                .Subscribe(_ => {
+                    filepath = btn.GetComponent<ImageObject>().Filepath;
 #if UNITY_ANDROID
-                postTexture.LoadImage(AndroidImageRotate(filepath));
+                    postImageBytes = AndroidImageRotate(filepath);
+                    postTexture.LoadImage(postImageBytes);
 #elif
                 postTexture.LoadImage(Utilities.LoadbinaryBytes(filepath));
 #endif               
-                postTexture.Apply(true, true);
-                var img = GameObject.Find("Canvas/Image").GetComponent<Image>();
-                Debug.unityLogger.Log("img", img);
-                img.sprite = Utilities.GetSpriteFromTexture2D(postTexture);
-                img.color = Color.white;
-                
+                    postTexture.Apply(true, true);
+                    var img = GameObject.Find("Canvas/Image").GetComponent<Image>();
+                    Debug.unityLogger.Log("img", img);
+                    img.sprite = Utilities.GetSpriteFromTexture2D(postTexture);
+                    img.color = Color.white;
             });
             sprites.RemoveAt(0);
             if (sprites.Count == 0) {
