@@ -70,36 +70,10 @@ public class PostData : MonoBehaviour {
         foreach (var s in fileList) {
             var item = Instantiate(Resources.Load("Prefab/AA")) as GameObject;
             item.GetComponent<ImageObject>().Filepath = s;
+            item.GetComponent<Image>().sprite =
+                Utilities.GetSpriteFromTexture2D(Utilities.GetTexture2DFromBytes(Utilities.GetImageByte(s)));
             item.transform.SetParent(content, false);
-        }
-        foreach (var btn in content.GetComponentsInChildren<Button>()) {
-        }
-        Observable.Create<byte[]>(observer => {
-            foreach (var path in fileList) {
-                if (!File.Exists(path)) continue;
-                var tex = Utilities.GetImageByte(path);
-                observer.OnNext(tex);
-            }
-            observer.OnCompleted();
-            return Disposable.Create(() => { });
-        }).Subscribe(
-            bytes => {
-                var t2D = Utilities.GetTexture2DFromBytes(bytes);
-                var sprite = Utilities.GetSpriteFromTexture2D(t2D);
-                sprites.Add(sprite);
-            });
-
-
-
-        Observable.Create<Button>(observer => {
-            foreach (var btn in content.GetComponentsInChildren<Button>()) {
-                observer.OnNext(btn);
-            }
-            observer.OnCompleted();
-            return Disposable.Create(() => { });
-        }).Subscribe(btn => {
-            btn.image.sprite = sprites[0];
-            sprites.RemoveAt(0);
+            var btn = item.GetComponent<Button>();
             btn.OnClickAsObservable()
                 .Subscribe(_ => {
                     filepath = btn.GetComponent<ImageObject>().Filepath;
@@ -115,7 +89,7 @@ public class PostData : MonoBehaviour {
                     img.sprite = Utilities.GetSpriteFromTexture2D(postTexture);
                     img.color = Color.white;
                 });
-        });
+        }
     }
 
     // Update is called once per frame
