@@ -14,8 +14,6 @@ namespace Vuforia
     public class DefaultTrackableEventHandler : MonoBehaviour,
                                                 ITrackableEventHandler
     {
-		public GameObject arcamera;
-		public ChangeImage changeimage;
         #region PRIVATE_MEMBER_VARIABLES
  
         private TrackableBehaviour mTrackableBehaviour;
@@ -72,9 +70,7 @@ namespace Vuforia
         {
             Renderer[] rendererComponents = GetComponentsInChildren<Renderer>(true);
             Collider[] colliderComponents = GetComponentsInChildren<Collider>(true);
-			arcamera = GameObject.FindGameObjectWithTag ("arcamera");
-			changeimage = arcamera.GetComponent<ChangeImage> ();
-			changeimage.texturechange();
+            GetComponent<DownloadImages> ().Texturechange();
             // Enable rendering:
             foreach (Renderer component in rendererComponents)
             {
