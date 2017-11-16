@@ -128,7 +128,11 @@ public class PostData : MonoBehaviour {
             btn.onClick.AddListener(() => {
                 filepath = btn.GetComponent<ImageObject>().Filepath;
 
+#if UNITY_ANDROID
+                postTexture.LoadImage(AndroidImageRotate(filepath));
+#elif
                 postTexture.LoadImage(Utilities.LoadbinaryBytes(filepath));
+#endif               
                 postTexture.Apply(true, true);
                 var img = GameObject.Find("Canvas/Image").GetComponent<Image>();
                 Debug.unityLogger.Log("img", img);
@@ -162,4 +166,11 @@ public class PostData : MonoBehaviour {
             .Skip(index).Take(20).ToList();
         return list;
     }
+#if UNITY_ANDROID
+    private byte[] AndroidImageRotate(string path) {
+        using (var plugin = new AndroidJavaClass("jp.ac.hal.unityandroidplugin.FileAccessKt")) {
+            return plugin.CallStatic<byte[]>("imageRotate",path);
+        }
+    }
+#endif
 }
