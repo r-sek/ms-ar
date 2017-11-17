@@ -22,7 +22,11 @@ public class SwipeScript : MonoBehaviour {
 			if (start.x > end.x) {
 				start = new Vector3(0,0,0);
 				end = new Vector3(0,0,0);
-				SceneManager.LoadScene ("UploadScene");
+				#if UNITY_IOS
+					SceneManager.LoadScene("iOSUploadScene");
+				#else
+					SceneManager.LoadScene ("UploadScene");
+				#endif
 			}
 		}
 	}
