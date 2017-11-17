@@ -1,8 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
+using UniRx;
 using UnityEngine;
-using UnityEngine.Networking;
 
 public class DownloadImages : MonoBehaviour {
     private const string SERVER_URL = "http://superkuma.net/textures/";
@@ -19,43 +18,32 @@ public class DownloadImages : MonoBehaviour {
         cacheImages = new List<string>();
         spriteRenderer = GameObject.FindGameObjectWithTag("target").GetComponent<SpriteRenderer>();
         messageTextMesh = GameObject.FindGameObjectWithTag("message").GetComponent<TextMesh>();
-        StartCoroutine(GetFile());
+
+        ObservableWWW.Get(DB_SERVER_URL)
+            .Subscribe(
+                result => {
+                    var json = new JSONObject(result);
+                    for (var i = 0; i < json.Count; i++) {
+                        var jsoncur = json[i];
+                        var jsonmsg = jsoncur.GetField("message");
+                        var jsonimg = jsoncur.GetField("file");
+                        loves.Add(new Love(jsonmsg.str, jsonimg.str));
+                    }
+                    foreach (var love in loves) {
+                        var url = SERVER_URL + love.ImageName;
+                        var path = Application.temporaryCachePath + "/" + love.ImageName;
+                        ObservableWWW.GetWWW(url)
+                            .Subscribe(
+                                success => { File.WriteAllBytes(path, success.bytes); },
+                                error => { Debug.Log("error1"); });
+                    }
+                },
+                error => { Debug.Log("errrrrrrrrrrrrrr"); }
+            );
     }
 
     // Update is called once per frame
     void Update() {
-    }
-
-    IEnumerator GetFile() {
-        var result = new WWW(DB_SERVER_URL);
-        yield return result;
-        Debug.Log(result.text);
-        if (result.error == null) {
-            var json = new JSONObject(result.text);
-            for (var i = 0; i < json.Count; i++) {
-                var jsoncur = json[i];
-                var jsonmsg = jsoncur.GetField("message");
-                var jsonimg = jsoncur.GetField("file");
-                loves.Add(new Love(jsonmsg.str, jsonimg.str));
-                Debug.Log(jsonmsg.str);
-            }
-        }
-
-        foreach (var love in loves) {
-            var url = SERVER_URL + love.ImageName;
-            var path = Application.temporaryCachePath + "/" + love.ImageName;
-            if (!File.Exists(path)) {
-                using (var www = UnityWebRequest.Get(url)) {
-                    yield return www.Send();
-                    if (www.isNetworkError) {
-                    }
-                    else {
-                        File.WriteAllBytes(path, www.downloadHandler.data);
-                    }
-                }
-            }
-            cacheImages.Add(path);
-        }
     }
 
     public void Texturechange() {
