@@ -47,8 +47,8 @@ public class PostData : MonoBehaviour {
                 }
                 ObservableWWW.PostWWW(SERVER_URL, formdata)
                     .Subscribe(
-                        result => { },
-                        error => { }
+                        result => { Debug.Log("success");}
+                        ,error => { Debug.Log("ng");}
                     );
             });
 
@@ -69,6 +69,7 @@ public class PostData : MonoBehaviour {
 
         foreach (var s in fileList) {
             var item = Instantiate(Resources.Load("Prefab/AA")) as GameObject;
+            if (item == null) continue;
             item.GetComponent<ImageObject>().Filepath = s;
             item.GetComponent<Image>().sprite =
                 Utilities.GetSpriteFromTexture2D(Utilities.GetTexture2DFromBytes(Utilities.GetImageByte(s)));
@@ -88,7 +89,7 @@ public class PostData : MonoBehaviour {
                     Debug.unityLogger.Log("img", img);
                     img.sprite = Utilities.GetSpriteFromTexture2D(postTexture);
                     img.color = Color.white;
-                });
+                }).AddTo(this);
         }
     }
 

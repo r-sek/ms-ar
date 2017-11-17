@@ -1,10 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using UniRx;
-using UniRx.Examples;
 using UnityEngine;
-using UnityEngine.Networking;
 
 public class DownloadImages : MonoBehaviour {
     private const string SERVER_URL = "http://superkuma.net/textures/";
@@ -37,18 +34,12 @@ public class DownloadImages : MonoBehaviour {
                         var path = Application.temporaryCachePath + "/" + love.ImageName;
                         ObservableWWW.GetWWW(url)
                             .Subscribe(
-                                success => {
-                                    File.WriteAllBytes(path,success.bytes);
-                                },
-                                error => {
-                                    Debug.Log("error1");
-                                });           
+                                success => { File.WriteAllBytes(path, success.bytes); },
+                                error => { Debug.Log("error1"); });
                     }
-
                 },
-                error => { Debug.Log("errrrrrrrrrrrrrr");}
+                error => { Debug.Log("errrrrrrrrrrrrrr"); }
             );
-        
     }
 
     // Update is called once per frame
