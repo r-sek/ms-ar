@@ -19,13 +19,14 @@ public class PostData : MonoBehaviour {
     private byte[] postImageBytes;
     private Image img;
 
+
     void Start() {
         postTexture = new Texture2D(0, 0);
         img = GameObject.Find("Canvas/Image").GetComponent<Image>();
 
         // 縦固定
-        Screen.orientation = ScreenOrientation.Portrait;
-
+        Screen.orientation = ScreenOrientation.Portrait;        
+        
         var submitBtn = GameObject.Find("Canvas/SubmitBtn").GetComponent<Button>();
         var inputField = GameObject.Find("Canvas/InputField").GetComponent<InputField>();
 
@@ -33,6 +34,9 @@ public class PostData : MonoBehaviour {
         var dirPath = GetDirPath();
         fileList = GetFilePathList(dirPath);
 
+        var progress = new ScheduledNotifier<float>();
+        progress.Subscribe(prog => Debug.Log(prog));
+        
         submitBtn.OnClickAsObservable()
             .Subscribe(_ => {
                 var formdata = new WWWForm();
@@ -44,7 +48,7 @@ public class PostData : MonoBehaviour {
                 if (postImageBytes.Length != 0) {
                     formdata.AddBinaryData("uploadfile", postImageBytes);
                 }
-                ObservableWWW.Post(SERVER_URL, formdata)
+                ObservableWWW.Post(SERVER_URL, formdata, progress)
                     .Subscribe(
                         result => {
                             img.color = Color.clear;
@@ -57,17 +61,18 @@ public class PostData : MonoBehaviour {
                             GameObject.Find("Dialog").GetComponent<Dialog>().ViewDialog();
                             Debug.Log("ng");
                         }
-                    );
-            });
+                    ).AddTo(this);
+            }).AddTo(this);
+        
         returnBtn.OnClickAsObservable()
             .Subscribe(
                 _ => SceneManager.LoadScene("MainView")
-            );
+            ).AddTo(this);
 
         inputField.OnEndEditAsObservable()
             .Subscribe(
                 s => { text = s; }
-            );
+            ).AddTo(this);
 
         content = GameObject.Find("Canvas/Scroll View/Viewport/Content").GetComponent<RectTransform>();
         content.sizeDelta = new Vector2(200 * fileList.Count, 0);
