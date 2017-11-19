@@ -1,33 +1,31 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using UniRx;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+[RequireComponent(typeof(SwipeGesture))]
 public class SwipeScript : MonoBehaviour {
+    private SwipeGesture swipeGesture;
 
-	public Vector3 start;
-	public Vector3 end;
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		if (Input.GetMouseButtonDown (0)) {
-			start = Input.mousePosition;
-		}
-		if(Input.GetMouseButtonUp(0)){
-			end = Input.mousePosition;
-			if (start.x > end.x) {
-				start = new Vector3(0,0,0);
-				end = new Vector3(0,0,0);
-				#if UNITY_IOS
+    // Use this for initialization
+    void Start() {
+    }
+
+    void OnEnable() {
+        swipeGesture = GetComponent<SwipeGesture>();
+        swipeGesture.OnSwipeRight
+            .Subscribe(_ => {
+                Debug.unityLogger.Log("swipe", "右");
+                #if UNITY_IOS
 					SceneManager.LoadScene("iOSUploadScene");
 				#else
-					SceneManager.LoadScene ("UploadScene");
-				#endif
-			}
-		}
-	}
+                    SceneManager.LoadScene("UploadScene");
+                #endif
+            });
+        swipeGesture.OnSwipeLeft
+            .Subscribe(_ => { Debug.unityLogger.Log("swipe", "左"); });
+        swipeGesture.OnSwipeDown
+            .Subscribe(_ => { Debug.unityLogger.Log("swipe", "下"); });
+        swipeGesture.OnSwipeUp
+            .Subscribe(_ => { Debug.unityLogger.Log("swipe", "上"); });
+    }
 }
