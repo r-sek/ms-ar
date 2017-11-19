@@ -62,10 +62,22 @@ public class DownloadImages : MonoBehaviour {
         var textures = new Texture2D(0, 0);
         textures.LoadImage(Utilities.LoadbinaryBytes(cacheImages[count]));
         var x = -spriteRenderer.bounds.center.x / spriteRenderer.bounds.size.x + 0.5f;
-        var y = -spriteRenderer.bounds.center.x / spriteRenderer.bounds.size.x + 0.5f;
-        spriteRenderer.sprite =
+        var y = -spriteRenderer.bounds.center.y / spriteRenderer.bounds.size.y + 0.5f;
+        var sprite =
             Sprite.Create(textures, new Rect(0, 0, textures.width, textures.height),
                 new Vector2(x, y));
+        spriteRenderer.sprite = sprite;
+        var sizeX = sprite.bounds.size.x;
+        var sizeY = sprite.bounds.size.y;
+
+        
+        var scaleX = 1.0f / sizeX;
+        var scaleY = 1.0f / sizeY;
+
+        var scale = scaleX > scaleY ? scaleX : scaleY;
+        
+        GameObject.FindGameObjectWithTag("target").transform.localScale = new Vector3(scale,scale,1.0f);
+        
         messageTextMesh.text = loves[count].Message;
         count++;
     }
