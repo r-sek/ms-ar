@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using UniRx;
-using UniRx.Triggers;
 using UnityEngine;
 
 public class DownloadImages : MonoBehaviour {
@@ -24,7 +23,7 @@ public class DownloadImages : MonoBehaviour {
         messageTextMesh = GameObject.FindGameObjectWithTag("message").GetComponent<TextMesh>();
         
         ObservableWWW.Get(DB_SERVER_URL)
-            .Select(result => {
+            .SelectMany(result => {
                 var json = new JSONObject(result);
                 for (var i = 0; i < json.Count; i++) {
                     var jsoncur = json[i];
@@ -33,26 +32,20 @@ public class DownloadImages : MonoBehaviour {
                     loves.Add(new Love(jsonmsg.str, jsonimg.str));
                 }
                 return loves;
-            })
-            .Subscribe(
-                result => {
-                    foreach (var love in loves) {
-                        var url = SERVER_URL + love.ImageName;
-                        var path = tempDir + "/" + love.ImageName;
-                        cacheImages.Add(path);
-                        if (!File.Exists(path)) {
-                            ObservableWWW.GetWWW(url)
-                                .Subscribe(
-                                    success => {
-                                        Debug.unityLogger.Log("pathpath", "pathpath");
-                                        File.WriteAllBytes(path, success.bytes);
-                                    },
-                                    error => { Debug.Log("error1"); });
-                        }
-                    }
-                },
-                error => { Debug.Log("errrrrrrrrrrrrrr"); }
-            );
+            }).Subscribe(love => {
+                var url = SERVER_URL + love.ImageName;
+                var path = tempDir + "/" + love.ImageName;
+                cacheImages.Add(path);
+                if (!File.Exists(path)) {
+                    ObservableWWW.GetWWW(url)
+                        .Subscribe(
+                            success => {
+                                Debug.unityLogger.Log("pathpath", "pathpath");
+                                File.WriteAllBytes(path, success.bytes);
+                            },
+                            error => {Debug.Log("error1");  });
+                }
+            });
     }
 
 // Update is called once per frame
@@ -71,7 +64,7 @@ public class DownloadImages : MonoBehaviour {
         var x = -spriteRenderer.bounds.center.x / spriteRenderer.bounds.size.x + 0.5f;
         var y = -spriteRenderer.bounds.center.x / spriteRenderer.bounds.size.x + 0.5f;
         spriteRenderer.sprite =
-            Sprite.Create(textures, new Rect(0, 0, 200, 200),
+            Sprite.Create(textures, new Rect(0, 0, textures.width, textures.height),
                 new Vector2(x, y));
         messageTextMesh.text = loves[count].Message;
         count++;
