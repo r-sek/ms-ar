@@ -9,7 +9,6 @@ using UnityEngine.UI;
 
 public class PostData : MonoBehaviour {
     private const string SERVER_URL = "http://superkuma.net/postData";
-    private List<Sprite> sprites;
     private List<string> fileList;
     private string text = "";
     private RectTransform content;
@@ -18,11 +17,11 @@ public class PostData : MonoBehaviour {
     private string filepath = "";
     private Texture2D postTexture;
     private byte[] postImageBytes;
-    private bool isbuttonClick = true;
+    private Image img;
 
     void Start() {
-        sprites = new List<Sprite>();
         postTexture = new Texture2D(0, 0);
+        img = GameObject.Find("Canvas/Image").GetComponent<Image>();
 
         // 縦固定
         Screen.orientation = ScreenOrientation.Portrait;
@@ -45,13 +44,21 @@ public class PostData : MonoBehaviour {
                 if (postImageBytes.Length != 0) {
                     formdata.AddBinaryData("uploadfile", postImageBytes);
                 }
-                ObservableWWW.PostWWW(SERVER_URL, formdata)
+                ObservableWWW.Post(SERVER_URL, formdata)
                     .Subscribe(
-                        result => { Debug.Log("success");}
-                        ,error => { Debug.Log("ng");}
+                        result => {
+                            img.color = Color.clear;
+                            postImageBytes = null;
+                            inputField.text = "";
+
+                            Debug.Log("success");
+                        }
+                        , error => {
+                            GameObject.Find("Dialog").GetComponent<Dialog>().ViewDialog();
+                            Debug.Log("ng");
+                        }
                     );
             });
-
         returnBtn.OnClickAsObservable()
             .Subscribe(
                 _ => SceneManager.LoadScene("MainView")
@@ -84,8 +91,6 @@ public class PostData : MonoBehaviour {
 #elif
                 postTexture.LoadImage(Utilities.LoadbinaryBytes(filepath));
 #endif
-                    postTexture.Apply(true, true);
-                    var img = GameObject.Find("Canvas/Image").GetComponent<Image>();
                     Debug.unityLogger.Log("img", img);
                     img.sprite = Utilities.GetSpriteFromTexture2D(postTexture);
                     img.color = Color.white;
