@@ -8,8 +8,8 @@ using UnityEngine.SceneManagement;
 
 public class start : MonoBehaviour {
 
-	//[DllImport ("__Internal")]
-	private static extern float OpenCameraRoll (string path);
+	[DllImport ("__Internal")]
+	private static extern void OpenCameraRoll (string path);
 
 	// Use this for initialization
 	void Start () {

@@ -1,4 +1,4 @@
-﻿using System;
+﻿/*using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -82,7 +82,7 @@ public class PostData : MonoBehaviour {
                     postImageBytes = AndroidImageRotate(filepath);
                     postTexture.LoadImage(postImageBytes);
 #elif
-                postTexture.LoadImage(Utilities.LoadbinaryBytes(filepath));
+					postTexture.LoadImage(Utilities.LoadbinaryBytes(filepath));
 #endif
                     postTexture.Apply(true, true);
                     var img = GameObject.Find("Canvas/Image").GetComponent<Image>();
@@ -125,3 +125,4 @@ public class PostData : MonoBehaviour {
     }
 #endif
 }
+*/
