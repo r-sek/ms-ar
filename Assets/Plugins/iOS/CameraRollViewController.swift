@@ -24,7 +24,7 @@ open class CameraRollViewController: UIViewController, UINavigationControllerDel
             do {
                 try imageData!.write(to: fileUrl, options: .atomic)
                 NSLog("passは"+CameraRollViewController.filePath);
-                UnitySendMessage("GameController", "SetImage", CameraRollViewController.filePath);
+                UnitySendMessage("Main Camera", "SetImage", CameraRollViewController.filePath);
             } catch {
                 print(error)
             }
