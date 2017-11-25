@@ -21,21 +21,20 @@ public class DownloadImages : MonoBehaviour {
         cacheImages = new List<string>();
         spriteRenderer = GameObject.FindGameObjectWithTag("target").GetComponent<SpriteRenderer>();
         messageTextMesh = GameObject.FindGameObjectWithTag("message").GetComponent<TextMesh>();
-        
-          ObservableWWW.Get(API_SERVER_URL)
-            .SelectMany(result => {
-                var json = new JSONObject(result);
-                for (var i = 0; i < json.Count; i++) {
-                    var jsoncur = json[i];
-                    var id = jsoncur.GetField("id").ToString();
-                    var username = jsoncur.GetField("name").ToString();
-                    var message = jsoncur.GetField("message").ToString();
-                    var mediaName = jsoncur.GetField("media_name").ToString();
-                    var mediaType = jsoncur.GetField("media_type").ToString();
-                    loves.Add(new Love(id,username,message, mediaName,mediaType));
-                }
+
+        ObservableWWW.Get(API_SERVER_URL)
+            .Select(text => new JSONObject(text))
+            .SelectMany(jsonList => jsonList.list)
+            .SelectMany(json => {
+                var id = json.GetField("id").ToString();
+                var username = json.GetField("name").ToString();
+                var message = json.GetField("message").ToString();
+                var mediaName = json.GetField("media_name").ToString();
+                var mediaType = json.GetField("media_type").ToString();
+                loves.Add(new Love(id, username, message, mediaName, mediaType));
                 return loves;
-            }).Subscribe(love => {
+            })
+            .Subscribe(love => {
                 var url = SERVER_URL + love.MediaName;
                 var path = tempDir + "/" + love.MediaName;
                 cacheImages.Add(path);
@@ -46,7 +45,7 @@ public class DownloadImages : MonoBehaviour {
                                 Debug.unityLogger.Log("pathpath", "pathpath");
                                 File.WriteAllBytes(path, success.bytes);
                             },
-                            error => {Debug.Log("error1");  });
+                            error => { Debug.Log("error1"); });
                 }
             });
     }
@@ -73,14 +72,14 @@ public class DownloadImages : MonoBehaviour {
         var sizeX = sprite.bounds.size.x;
         var sizeY = sprite.bounds.size.y;
 
-        
+
         var scaleX = 1.0f / sizeX;
         var scaleY = 1.0f / sizeY;
 
         var scale = scaleX > scaleY ? scaleX : scaleY;
-        
-        GameObject.FindGameObjectWithTag("target").transform.localScale = new Vector3(scale,scale,1.0f);
-        
+
+        GameObject.FindGameObjectWithTag("target").transform.localScale = new Vector3(scale, scale, 1.0f);
+
         messageTextMesh.text = loves[count].Message;
         count++;
     }
