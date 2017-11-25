@@ -4,8 +4,8 @@ using UniRx;
 using UnityEngine;
 
 public class DownloadImages : MonoBehaviour {
-    private const string SERVER_URL = "http://superkuma.net/textures/";
-    private const string DB_SERVER_URL = "http://superkuma.net/DB";
+    private const string SERVER_URL = "http://superkuma.net/storage/textures/";
+    private const string API_SERVER_URL = "http://superkuma.net/api/json/";
     private List<Love> loves;
     private int count;
     private SpriteRenderer spriteRenderer;
@@ -22,19 +22,22 @@ public class DownloadImages : MonoBehaviour {
         spriteRenderer = GameObject.FindGameObjectWithTag("target").GetComponent<SpriteRenderer>();
         messageTextMesh = GameObject.FindGameObjectWithTag("message").GetComponent<TextMesh>();
         
-        ObservableWWW.Get(DB_SERVER_URL)
+          ObservableWWW.Get(API_SERVER_URL)
             .SelectMany(result => {
                 var json = new JSONObject(result);
                 for (var i = 0; i < json.Count; i++) {
                     var jsoncur = json[i];
-                    var jsonmsg = jsoncur.GetField("message");
-                    var jsonimg = jsoncur.GetField("file");
-                    loves.Add(new Love(jsonmsg.str, jsonimg.str));
+                    var id = jsoncur.GetField("id").ToString();
+                    var username = jsoncur.GetField("name").ToString();
+                    var message = jsoncur.GetField("message").ToString();
+                    var mediaName = jsoncur.GetField("media_name").ToString();
+                    var mediaType = jsoncur.GetField("media_type").ToString();
+                    loves.Add(new Love(id,username,message, mediaName,mediaType));
                 }
                 return loves;
             }).Subscribe(love => {
-                var url = SERVER_URL + love.ImageName;
-                var path = tempDir + "/" + love.ImageName;
+                var url = SERVER_URL + love.MediaName;
+                var path = tempDir + "/" + love.MediaName;
                 cacheImages.Add(path);
                 if (!File.Exists(path)) {
                     ObservableWWW.GetWWW(url)
