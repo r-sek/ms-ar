@@ -25,7 +25,7 @@ public static class Utilities {
         return t2D;
     }
 
-/*public static byte[] GetImageByte(string path) {
+public static byte[] GetImageByte(string path) {
 #if UNITY_ANDROID
         using (var p = new AndroidJavaClass("jp.ac.hal.unityandroidplugin.FileAccessKt")) {
             using (var unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer")) {
@@ -44,5 +44,5 @@ public static class Utilities {
                  return www.bytes;
             }
 #endif
-    }*/
+    }
 }
