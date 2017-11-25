@@ -1,4 +1,5 @@
-#import <CameraRollSample-Swift.h>
+#import <UIKit/UIKit.h>
+#import <ProductName-Swift.h>
 
 extern "C" {
     void OpenCameraRoll(const char *path) {
