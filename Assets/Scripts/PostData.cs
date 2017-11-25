@@ -94,7 +94,7 @@ public class PostData : MonoBehaviour {
                     postImageBytes = AndroidImageRotate(filepath);
                     postTexture.LoadImage(postImageBytes);
 #elif
-                postTexture.LoadImage(Utilities.LoadbinaryBytes(filepath));
+					postTexture.LoadImage(Utilities.LoadbinaryBytes(filepath));
 #endif
                     Debug.unityLogger.Log("img", img);
                     img.sprite = Utilities.GetSpriteFromTexture2D(postTexture);
