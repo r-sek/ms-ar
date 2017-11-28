@@ -24,10 +24,10 @@ public static class Utilities {
         t2D.Apply(true, true);
         return t2D;
     }
-#if UNITY_ANDROID
-public static byte[] GetImageByte(string path) {
 
-		using (var p = new AndroidJavaClass ("jp.ac.hal.unityandroidplugin.FileAccessKt")) {
+#if UNITY_ANDROID
+    public static byte[] GetImageByte(string path) {
+        using (var p = new AndroidJavaClass ("jp.ac.hal.unityandroidplugin.FileAccessKt")) {
 			using (var unityPlayer = new AndroidJavaClass ("com.unity3d.player.UnityPlayer")) {
 				using (var activity = unityPlayer.GetStatic<AndroidJavaObject> ("currentActivity")) {
 					using (var context = activity.Call<AndroidJavaObject> ("getApplicationContext")) {
