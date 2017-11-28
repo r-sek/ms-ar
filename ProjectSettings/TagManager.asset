@@ -9,6 +9,7 @@ TagManager:
   - message
   - arcamera
   - canvas
+  - Load
   layers:
   - Default
   - TransparentFX
