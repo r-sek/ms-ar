@@ -18,7 +18,7 @@ public class PostData : MonoBehaviour {
     private Texture2D postTexture;
     private byte[] postImageBytes;
     private Image img;
-
+    private string fileName = "";
 
     void Start() {
         postTexture = new Texture2D(0, 0);
@@ -35,7 +35,7 @@ public class PostData : MonoBehaviour {
         fileList = GetFilePathList(dirPath);
 
         var progress = new ScheduledNotifier<float>();
-        progress.Subscribe(prog => Debug.Log(prog));
+        //progress.Subscribe(prog => Debug.Log(prog));
         
         submitBtn.OnClickAsObservable()
             .Subscribe(_ => {
@@ -46,7 +46,7 @@ public class PostData : MonoBehaviour {
                     formdata.AddField("message", text);
                 }
                 if (postImageBytes.Length != 0) {
-                    formdata.AddBinaryData("uploadfile", postImageBytes);
+                    formdata.AddBinaryData("uploadfile", postImageBytes, fileName);
                 }
                 ObservableWWW.Post(SERVER_URL, formdata, progress)
                     .Subscribe(
@@ -90,11 +90,14 @@ public class PostData : MonoBehaviour {
             btn.OnClickAsObservable()
                 .Subscribe(_ => {
                     filepath = btn.GetComponent<ImageObject>().Filepath;
+                    FileInfo n = new FileInfo(filepath);
+                    fileName = n.Name;
+                    Debug.unityLogger.Log("fileName", fileName);
 #if UNITY_ANDROID
                     postImageBytes = AndroidImageRotate(filepath);
                     postTexture.LoadImage(postImageBytes);
-#elif
-					postTexture.LoadImage(Utilities.LoadbinaryBytes(filepath));
+#else
+                postTexture.LoadImage(Utilities.LoadbinaryBytes(filepath));
 #endif
                     Debug.unityLogger.Log("img", img);
                     img.sprite = Utilities.GetSpriteFromTexture2D(postTexture);
