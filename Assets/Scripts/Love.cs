@@ -1,10 +1,13 @@
-﻿public class Love {
+﻿using UnityEngine;
+
+public class Love {
     public Love(string id, string name, string message, string mediaName, string mediaType) {
         Id = id;
         Name = name;
         Message = message;
         MediaName = mediaName;
         MediaType = GetMediaType(mediaType);
+        Debug.unityLogger.Log("media",MediaType);
     }
 
     public string Id { get; set; }
