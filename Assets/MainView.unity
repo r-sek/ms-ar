@@ -389,6 +389,34 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11400000, guid: 384a0d8cc71cef74a873b3353337ea2c, type: 2}
       propertyPath: mExtendedTracking
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: 384a0d8cc71cef74a873b3353337ea2c, type: 2}
+      propertyPath: mInitializeSmartTerrain
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: 384a0d8cc71cef74a873b3353337ea2c, type: 2}
+      propertyPath: mReconstructionToInitialize
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: 384a0d8cc71cef74a873b3353337ea2c, type: 2}
+      propertyPath: mSmartTerrainOccluderBoundsMin.x
+      value: -110
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: 384a0d8cc71cef74a873b3353337ea2c, type: 2}
+      propertyPath: mSmartTerrainOccluderBoundsMin.z
+      value: -110
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: 384a0d8cc71cef74a873b3353337ea2c, type: 2}
+      propertyPath: mSmartTerrainOccluderBoundsMax.x
+      value: 110
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: 384a0d8cc71cef74a873b3353337ea2c, type: 2}
+      propertyPath: mSmartTerrainOccluderBoundsMax.z
+      value: 110
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: 384a0d8cc71cef74a873b3353337ea2c, type: 2}
+      propertyPath: mSmartTerrainOccluderRotation.w
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents:
@@ -1338,7 +1366,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11400000, guid: 384a0d8cc71cef74a873b3353337ea2c, type: 2}
       propertyPath: mExtendedTracking
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 11400004, guid: 384a0d8cc71cef74a873b3353337ea2c, type: 2}
@@ -1616,8 +1644,8 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 2100000, guid: b05d02401c7c741839f919fd5bb92a5c, type: 2}
-  - {fileID: 0}
+  - {fileID: 2100000, guid: e9834f62a3f8147ed8bb040dfb401537, type: 2}
+  - {fileID: 2100000, guid: e9834f62a3f8147ed8bb040dfb401537, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1713,7 +1741,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -149076861
+  randomSeed: 581571138
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -1865,7 +1893,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 20
+      scalar: 30
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -2273,7 +2301,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 200
+      scalar: 50
       minScalar: 10
       maxCurve:
         serializedVersion: 2
