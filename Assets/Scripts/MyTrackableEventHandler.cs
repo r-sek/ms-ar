@@ -5,13 +5,14 @@ using System.Collections;
 public class MyTrackableEventHandler : MonoBehaviour, ITrackableEventHandler {
     private TrackableBehaviour mTrackableBehaviour;
 	public ParticleSystem ps;
+	public DownloadImages downloadimage;
 	private SpriteRenderer target;
 	private MeshRenderer text;
 	private Vector3 pos;
     // Use this for initialization
     void Start() {
-		target = GameObject.FindGameObjectWithTag ("target").GetComponent<SpriteRenderer> ();
-		text = GameObject.FindGameObjectWithTag ("message").GetComponent<MeshRenderer> ();
+		target = GameObject.Find ("Sprite").GetComponent<SpriteRenderer> ();
+		text = GameObject.Find ("message").GetComponent<MeshRenderer> ();
 		var sprite = target.sprite;
 		pos = new Vector3 (sprite.bounds.extents.x,sprite.bounds.extents.y,sprite.bounds.extents.z);
 		ps.transform.position = pos;
@@ -54,7 +55,7 @@ public class MyTrackableEventHandler : MonoBehaviour, ITrackableEventHandler {
 		yield return new WaitForSeconds (2.0f);
 	}
 	private IEnumerator Fadein(){
-		GetComponent<DownloadImages>().Texturechange();
+		downloadimage.Texturechange();
 		var color = target.color;
 		color.a = 0.01f;
 		target.material.color = color;
