@@ -9,7 +9,9 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class PostData : MonoBehaviour {
-    private const string SERVER_URL = "http://superkuma.net/postData";
+//    private const string SERVER_URL = "http://superkuma.net/postData";
+    private const string SERVER_URL = "http://suoerkuma.net/api/json";
+
     private List<string> fileList;
     private string text = "";
     private RectTransform content;
@@ -26,8 +28,8 @@ public class PostData : MonoBehaviour {
         img = GameObject.Find("Canvas/Image").GetComponent<Image>();
 
         // 縦固定
-        Screen.orientation = ScreenOrientation.Portrait;        
-        
+        Screen.orientation = ScreenOrientation.Portrait;
+
         var submitBtn = GameObject.Find("Canvas/SubmitBtn").GetComponent<Button>();
         var inputField = GameObject.Find("Canvas/InputField").GetComponent<InputField>();
 
@@ -37,7 +39,7 @@ public class PostData : MonoBehaviour {
 
         var progress = new ScheduledNotifier<float>();
         //progress.Subscribe(prog => Debug.Log(prog));
-        
+
         submitBtn.OnClickAsObservable()
             .Subscribe(_ => {
                 var formdata = new WWWForm();
@@ -64,7 +66,7 @@ public class PostData : MonoBehaviour {
                         }
                     ).AddTo(this);
             }).AddTo(this);
-        
+
         returnBtn.OnClickAsObservable()
             .Subscribe(
                 _ => SceneManager.LoadScene("MainView")
@@ -91,7 +93,7 @@ public class PostData : MonoBehaviour {
             btn.OnClickAsObservable()
                 .Subscribe(_ => {
                     filepath = btn.GetComponent<ImageObject>().Filepath;
-                    FileInfo n = new FileInfo(filepath);
+                    var n = new FileInfo(filepath);
                     fileName = n.Name;
                     Debug.unityLogger.Log("fileName", fileName);
 #if UNITY_ANDROID

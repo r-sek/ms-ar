@@ -14,6 +14,7 @@ public class DownloadImages : MonoBehaviour {
     private string tempDir = "";
     private ReactiveProperty<Love> viewLove;
 
+
     void Start() {
         count = 0;
         loves = new List<Love>();
@@ -25,20 +26,27 @@ public class DownloadImages : MonoBehaviour {
         ObservableWWW.Get(API_SERVER_URL)
             .Select(text => new JSONObject(text))
             .SelectMany(jsonList => jsonList.list)
-            .SelectMany(json => {
-                var id = json.GetField("id").ToString();
-                var username = json.GetField("name").ToString();
-                var message = json.GetField("message").ToString();
-                var mediaName = json.GetField("media_name").ToString();
-                var mediaType = json.GetField("media_type").ToString();
-                loves.Add(new Love(id, username, message, mediaName, mediaType));
-                return loves;
+            .Select(json => {
+                var id = json.GetField("id").str;
+                var username = json.GetField("name").str;
+                var message = json.GetField("message").str;
+                var mediaName = json.GetField("media_name").str;
+                var mediaType = json.GetField("media_type").str;
+                var love = new Love(id,username,message,mediaName,mediaType);
+                loves.Add(love);
+                Debug.unityLogger.Log("love", mediaName + "::" + loves[loves.Count - 1].MediaName);
+                Debug.unityLogger.Log("love", mediaType + "::" + loves[loves.Count - 1].MediaType);
+                Debug.unityLogger.Log("love", message + "::" + loves[loves.Count - 1].Message);
+                return love;
             })
+            .Where(love=>love.MediaType !=Love.MediaTypeEnum.NONE)
             .Subscribe(love => {
+                Debug.unityLogger.Log("url",love.MediaName);
                 var url = SERVER_URL + love.MediaName;
                 var path = tempDir + "/" + love.MediaName;
                 cacheImages.Add(path);
                 if (!File.Exists(path)) {
+                    Debug.unityLogger.Log("url", url);
                     ObservableWWW.GetWWW(url)
                         .Subscribe(
                             success => {
