@@ -4,8 +4,8 @@ using UniRx;
 using UnityEngine;
 
 public class DownloadImages : MonoBehaviour {
-    private const string SERVER_URL = "http://superkuma.net/textures/";
-    private const string DB_SERVER_URL = "http://superkuma.net/DB";
+    private const string SERVER_URL = "http://superkuma.net/storage/textures/";
+    private const string API_SERVER_URL = "http://superkuma.net/api/json/";
     private List<Love> loves;
     private int count;
     private SpriteRenderer spriteRenderer;
@@ -21,20 +21,22 @@ public class DownloadImages : MonoBehaviour {
         cacheImages = new List<string>();
         spriteRenderer = GameObject.FindGameObjectWithTag("target").GetComponent<SpriteRenderer>();
         messageTextMesh = GameObject.FindGameObjectWithTag("message").GetComponent<TextMesh>();
-        
-        ObservableWWW.Get(DB_SERVER_URL)
-            .SelectMany(result => {
-                var json = new JSONObject(result);
-                for (var i = 0; i < json.Count; i++) {
-                    var jsoncur = json[i];
-                    var jsonmsg = jsoncur.GetField("message");
-                    var jsonimg = jsoncur.GetField("file");
-                    loves.Add(new Love(jsonmsg.str, jsonimg.str));
-                }
+
+        ObservableWWW.Get(API_SERVER_URL)
+            .Select(text => new JSONObject(text))
+            .SelectMany(jsonList => jsonList.list)
+            .SelectMany(json => {
+                var id = json.GetField("id").ToString();
+                var username = json.GetField("name").ToString();
+                var message = json.GetField("message").ToString();
+                var mediaName = json.GetField("media_name").ToString();
+                var mediaType = json.GetField("media_type").ToString();
+                loves.Add(new Love(id, username, message, mediaName, mediaType));
                 return loves;
-            }).Subscribe(love => {
-                var url = SERVER_URL + love.ImageName;
-                var path = tempDir + "/" + love.ImageName;
+            })
+            .Subscribe(love => {
+                var url = SERVER_URL + love.MediaName;
+                var path = tempDir + "/" + love.MediaName;
                 cacheImages.Add(path);
                 if (!File.Exists(path)) {
                     ObservableWWW.GetWWW(url)
@@ -43,7 +45,7 @@ public class DownloadImages : MonoBehaviour {
                                 Debug.unityLogger.Log("pathpath", "pathpath");
                                 File.WriteAllBytes(path, success.bytes);
                             },
-                            error => {Debug.Log("error1");  });
+                            error => { Debug.Log("error1"); });
                 }
             });
     }
@@ -70,14 +72,14 @@ public class DownloadImages : MonoBehaviour {
         var sizeX = sprite.bounds.size.x;
         var sizeY = sprite.bounds.size.y;
 
-        
+
         var scaleX = 1.0f / sizeX;
         var scaleY = 1.0f / sizeY;
 
         var scale = scaleX > scaleY ? scaleX : scaleY;
-        
-        GameObject.FindGameObjectWithTag("target").transform.localScale = new Vector3(scale,scale,1.0f);
-        
+
+        GameObject.FindGameObjectWithTag("target").transform.localScale = new Vector3(scale, scale, 1.0f);
+
         messageTextMesh.text = loves[count].Message;
         count++;
     }
