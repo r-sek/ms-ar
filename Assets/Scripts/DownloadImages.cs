@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class DownloadImages : MonoBehaviour {
     private const string SERVER_URL = "http://superkuma.net/storage/textures/";
-    private const string API_SERVER_URL = "http://superkuma.net/api/json/";
+    private const string API_SERVER_URL = "http://superkuma.net/api/json";
     private List<Love> loves;
     private int count;
     private SpriteRenderer spriteRenderer;
@@ -26,25 +26,16 @@ public class DownloadImages : MonoBehaviour {
         ObservableWWW.Get(API_SERVER_URL)
             .Select(text => new JSONObject(text))
             .SelectMany(jsonList => jsonList.list)
-            .Select(json => {
-                var id = json.GetField("id").str;
-                var username = json.GetField("name").str;
-                var message = json.GetField("message").str;
-                var mediaName = json.GetField("media_name").str;
-                var mediaType = json.GetField("media_type").str;
-                var love = new Love(id,username,message,mediaName,mediaType);
-                loves.Add(love);
-                Debug.unityLogger.Log("love", mediaName + "::" + loves[loves.Count - 1].MediaName);
-                Debug.unityLogger.Log("love", mediaType + "::" + loves[loves.Count - 1].MediaType);
-                Debug.unityLogger.Log("love", message + "::" + loves[loves.Count - 1].Message);
-                return love;
-            })
-            .Where(love=>love.MediaType !=Love.MediaTypeEnum.NONE)
+            .Select(CreateLove)
+            .Where(love => love.MediaType != Love.MediaTypeEnum.NONE)
             .Subscribe(love => {
-                Debug.unityLogger.Log("url",love.MediaName);
                 var url = SERVER_URL + love.MediaName;
                 var path = tempDir + "/" + love.MediaName;
+                loves.Add(love);
                 cacheImages.Add(path);
+                Debug.unityLogger.Log("loves", url);
+                Debug.unityLogger.Log("loves", loves.Count);
+                Debug.unityLogger.Log("loves", cacheImages.Count);
                 if (!File.Exists(path)) {
                     Debug.unityLogger.Log("url", url);
                     ObservableWWW.GetWWW(url)
@@ -80,7 +71,6 @@ public class DownloadImages : MonoBehaviour {
         var sizeX = sprite.bounds.size.x;
         var sizeY = sprite.bounds.size.y;
 
-
         var scaleX = 1.0f / sizeX;
         var scaleY = 1.0f / sizeY;
 
@@ -90,5 +80,15 @@ public class DownloadImages : MonoBehaviour {
 
         messageTextMesh.text = loves[count].Message;
         count++;
+    }
+
+    public Love CreateLove(JSONObject json) {
+        var id = json.GetField("id").str;
+        var username = json.GetField("name").str;
+        var message = json.GetField("message").str;
+        var mediaName = json.GetField("media_name").str;
+        var mediaType = json.GetField("media_type").str;
+        var love = new Love(id, username, message, mediaName, mediaType);
+      return love;
     }
 }
