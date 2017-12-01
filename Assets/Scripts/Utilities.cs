@@ -24,10 +24,9 @@ public static class Utilities {
         t2D.Apply(true, true);
         return t2D;
     }
-
-#if UNITY_ANDROID
-    public static byte[] GetImageByte(string path) {
-        using (var p = new AndroidJavaClass ("jp.ac.hal.unityandroidplugin.FileAccessKt")) {
+public static byte[] GetImageByte(string path) {
+		#if UNITY_ANDROID
+		using (var p = new AndroidJavaClass ("jp.ac.hal.unityandroidplugin.FileAccessKt")) {
 			using (var unityPlayer = new AndroidJavaClass ("com.unity3d.player.UnityPlayer")) {
 				using (var activity = unityPlayer.GetStatic<AndroidJavaObject> ("currentActivity")) {
 					using (var context = activity.Call<AndroidJavaObject> ("getApplicationContext")) {
@@ -36,16 +35,14 @@ public static class Utilities {
 				}
 			}
 		}
-	}
+	
 #else
-	/*
+		string FILE_HEADER = "file://";
             using (var www = new WWW(FILE_HEADER + path)) {
-                while (!www.isDone) {
-                    yield return new WaitForEndOfFrame();
-                }
-                 return www.bytes;
+                return www.bytes;
             }
-	*/
+	
 #endif
+	}
 }
 
