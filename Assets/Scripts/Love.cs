@@ -7,7 +7,6 @@ public class Love {
         Message = message;
         MediaName = mediaName;
         MediaType = GetMediaType(mediaType);
-        Debug.unityLogger.Log("media",MediaType);
     }
 
     public string Id { get; set; }
