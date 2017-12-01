@@ -9,8 +9,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class PostData : MonoBehaviour {
-//    private const string SERVER_URL = "http://superkuma.net/postData";
-    private const string SERVER_URL = "http://suoerkuma.net/api/json";
+    private const string SERVER_URL = "http://superkuma.net/api/json";
 
     private List<string> fileList;
     private string text = "";
@@ -49,33 +48,34 @@ public class PostData : MonoBehaviour {
                     formdata.AddField("message", text);
                 }
                 if (postImageBytes.Length != 0) {
-                    formdata.AddBinaryData("uploadfile", postImageBytes, fileName);
+                    formdata.AddBinaryData("upload_file", postImageBytes, fileName);
                 }
                 ObservableWWW.Post(SERVER_URL, formdata, progress)
                     .Subscribe(
                         result => {
                             img.color = Color.clear;
-                            postImageBytes = null;
+                            postImageBytes = new byte[0];
                             inputField.text = "";
+                            Debug.unityLogger.Log("result",result);
 
                             Debug.Log("success");
-                        }
-                        , error => {
+                        }, 
+                        error => {
                             GameObject.Find("Dialog").GetComponent<Dialog>().ViewDialog();
                             Debug.Log("ng");
                         }
-                    ).AddTo(this);
-            }).AddTo(this);
+                    );
+            });
 
         returnBtn.OnClickAsObservable()
             .Subscribe(
                 _ => SceneManager.LoadScene("MainView")
-            ).AddTo(this);
+            );
 
         inputField.OnEndEditAsObservable()
             .Subscribe(
                 s => { text = s; }
-            ).AddTo(this);
+            );
 
         content = GameObject.Find("Canvas/Scroll View/Viewport/Content").GetComponent<RectTransform>();
         content.sizeDelta = new Vector2(200 * fileList.Count, 0);
@@ -100,12 +100,12 @@ public class PostData : MonoBehaviour {
                     postImageBytes = AndroidImageRotate(filepath);
                     postTexture.LoadImage(postImageBytes);
 #else
-                postTexture.LoadImage(Utilities.LoadbinaryBytes(filepath));
+                    postTexture.LoadImage(Utilities.LoadbinaryBytes(filepath));
 #endif
                     Debug.unityLogger.Log("img", img);
                     img.sprite = Utilities.GetSpriteFromTexture2D(postTexture);
                     img.color = Color.white;
-                }).AddTo(this);
+                });
         }
     }
 
