@@ -10,6 +10,7 @@ TagManager:
   - arcamera
   - canvas
   - Load
+  - moviecanvas
   layers:
   - Default
   - TransparentFX
