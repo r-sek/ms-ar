@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class DownloadImages : MonoBehaviour {
     private const string SERVER_URL = "http://superkuma.net/storage/textures/";
-    private const string API_SERVER_URL = "http://superkuma.net/api/json/";
+    private const string API_SERVER_URL = "http://superkuma.net/api/json";
     private List<Love> loves;
     private int count;
     private SpriteRenderer spriteRenderer;
@@ -13,6 +13,7 @@ public class DownloadImages : MonoBehaviour {
     private List<string> cacheImages;
     private string tempDir = "";
     private ReactiveProperty<Love> viewLove;
+
 
     void Start() {
         count = 0;
@@ -25,20 +26,18 @@ public class DownloadImages : MonoBehaviour {
         ObservableWWW.Get(API_SERVER_URL)
             .Select(text => new JSONObject(text))
             .SelectMany(jsonList => jsonList.list)
-            .SelectMany(json => {
-                var id = json.GetField("id").ToString();
-                var username = json.GetField("name").ToString();
-                var message = json.GetField("message").ToString();
-                var mediaName = json.GetField("media_name").ToString();
-                var mediaType = json.GetField("media_type").ToString();
-                loves.Add(new Love(id, username, message, mediaName, mediaType));
-                return loves;
-            })
+            .Select(CreateLove)
+            .Where(love => love.MediaType != Love.MediaTypeEnum.NONE)
             .Subscribe(love => {
                 var url = SERVER_URL + love.MediaName;
                 var path = tempDir + "/" + love.MediaName;
+                loves.Add(love);
                 cacheImages.Add(path);
+                Debug.unityLogger.Log("loves", url);
+                Debug.unityLogger.Log("loves", loves.Count);
+                Debug.unityLogger.Log("loves", cacheImages.Count);
                 if (!File.Exists(path)) {
+                    Debug.unityLogger.Log("url", url);
                     ObservableWWW.GetWWW(url)
                         .Subscribe(
                             success => {
@@ -72,7 +71,6 @@ public class DownloadImages : MonoBehaviour {
         var sizeX = sprite.bounds.size.x;
         var sizeY = sprite.bounds.size.y;
 
-
         var scaleX = 1.0f / sizeX;
         var scaleY = 1.0f / sizeY;
 
@@ -82,5 +80,15 @@ public class DownloadImages : MonoBehaviour {
 
         messageTextMesh.text = loves[count].Message;
         count++;
+    }
+
+    public Love CreateLove(JSONObject json) {
+        var id = json.GetField("id").str;
+        var username = json.GetField("name").str;
+        var message = json.GetField("message").str;
+        var mediaName = json.GetField("media_name").str;
+        var mediaType = json.GetField("media_type").str;
+        var love = new Love(id, username, message, mediaName, mediaType);
+      return love;
     }
 }

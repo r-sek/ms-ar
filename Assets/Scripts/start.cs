@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Runtime.InteropServices;
@@ -8,13 +9,14 @@ using UnityEngine.SceneManagement;
 using UniRx;
 
 public class start : MonoBehaviour {
-	private const string SERVER_URL = "http://superkuma.net/postData";
-
+	private const string SERVER_URL = "http://superkuma.net/api/json";
+	private const string FILE_HEAD = "file://";
 	[DllImport ("__Internal")]
 	private static extern void OpenCameraRoll (string path);
 	private byte[] imageBinary;
 	private string text = "";
 	private Texture2D post;
+	private string filename = "";
 	public Image image;
 	// Use this for initialization
 	void Start () {
@@ -46,6 +48,8 @@ public class start : MonoBehaviour {
 		var sprite = Sprite.Create (texture2D, new Rect (0, 0, texture2D.width, texture2D.height), 0.5f * Vector2.one);
 		image.sprite = sprite;
 		imageBinary = Utilities.LoadbinaryBytes (path);
+		var f = new FileInfo (path);
+		filename = f.Name;
 	}
 	public void ChangeImage(){
 		#if UNITY_IOS
@@ -63,7 +67,7 @@ public class start : MonoBehaviour {
 			formdata.AddField("message", text);
 		}
 		if (imageBinary.Length != 0) {
-			formdata.AddBinaryData("uploadfile", imageBinary);
+			formdata.AddBinaryData("upload_file", imageBinary , filename);
 		}
 		ObservableWWW.PostWWW(SERVER_URL, formdata)
 			.Subscribe(

@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,7 +9,8 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class PostData : MonoBehaviour {
-    private const string SERVER_URL = "http://superkuma.net/postData";
+    private const string SERVER_URL = "http://superkuma.net/api/json";
+
     private List<string> fileList;
     private string text = "";
     private RectTransform content;
@@ -25,8 +27,8 @@ public class PostData : MonoBehaviour {
         img = GameObject.Find("Canvas/Image").GetComponent<Image>();
 
         // 縦固定
-        Screen.orientation = ScreenOrientation.Portrait;        
-        
+        Screen.orientation = ScreenOrientation.Portrait;
+
         var submitBtn = GameObject.Find("Canvas/SubmitBtn").GetComponent<Button>();
         var inputField = GameObject.Find("Canvas/InputField").GetComponent<InputField>();
 
@@ -36,7 +38,7 @@ public class PostData : MonoBehaviour {
 
         var progress = new ScheduledNotifier<float>();
         //progress.Subscribe(prog => Debug.Log(prog));
-        
+
         submitBtn.OnClickAsObservable()
             .Subscribe(_ => {
                 var formdata = new WWWForm();
@@ -46,33 +48,34 @@ public class PostData : MonoBehaviour {
                     formdata.AddField("message", text);
                 }
                 if (postImageBytes.Length != 0) {
-                    formdata.AddBinaryData("uploadfile", postImageBytes, fileName);
+                    formdata.AddBinaryData("upload_file", postImageBytes, fileName);
                 }
                 ObservableWWW.Post(SERVER_URL, formdata, progress)
                     .Subscribe(
                         result => {
                             img.color = Color.clear;
-                            postImageBytes = null;
+                            postImageBytes = new byte[0];
                             inputField.text = "";
+                            Debug.unityLogger.Log("result",result);
 
                             Debug.Log("success");
-                        }
-                        , error => {
+                        }, 
+                        error => {
                             GameObject.Find("Dialog").GetComponent<Dialog>().ViewDialog();
                             Debug.Log("ng");
                         }
-                    ).AddTo(this);
-            }).AddTo(this);
-        
+                    );
+            });
+
         returnBtn.OnClickAsObservable()
             .Subscribe(
                 _ => SceneManager.LoadScene("MainView")
-            ).AddTo(this);
+            );
 
         inputField.OnEndEditAsObservable()
             .Subscribe(
                 s => { text = s; }
-            ).AddTo(this);
+            );
 
         content = GameObject.Find("Canvas/Scroll View/Viewport/Content").GetComponent<RectTransform>();
         content.sizeDelta = new Vector2(200 * fileList.Count, 0);
@@ -90,19 +93,19 @@ public class PostData : MonoBehaviour {
             btn.OnClickAsObservable()
                 .Subscribe(_ => {
                     filepath = btn.GetComponent<ImageObject>().Filepath;
-                    FileInfo n = new FileInfo(filepath);
+                    var n = new FileInfo(filepath);
                     fileName = n.Name;
                     Debug.unityLogger.Log("fileName", fileName);
 #if UNITY_ANDROID
                     postImageBytes = AndroidImageRotate(filepath);
                     postTexture.LoadImage(postImageBytes);
 #else
-                postTexture.LoadImage(Utilities.LoadbinaryBytes(filepath));
+                    postTexture.LoadImage(Utilities.LoadbinaryBytes(filepath));
 #endif
                     Debug.unityLogger.Log("img", img);
                     img.sprite = Utilities.GetSpriteFromTexture2D(postTexture);
                     img.color = Color.white;
-                }).AddTo(this);
+                });
         }
     }
 

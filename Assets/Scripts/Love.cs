@@ -1,4 +1,6 @@
-﻿public class Love {
+﻿using UnityEngine;
+
+public class Love {
     public Love(string id, string name, string message, string mediaName, string mediaType) {
         Id = id;
         Name = name;
