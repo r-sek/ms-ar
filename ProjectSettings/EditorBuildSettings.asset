@@ -5,12 +5,15 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/MainView.unity
     guid: 5ec1e4de6c2ab4a07afb17b90bd08866
   - enabled: 0
     path: Assets/UploadScene.unity
     guid: 21e01b12111a64839b7072bc9bbfd36e
-  - enabled: 1
+  - enabled: 0
     path: Assets/iOSUploadScene.unity
     guid: 26a255b5abb224f8181711a442364cc2
+  - enabled: 1
+    path: Assets/SphereScene.unity
+    guid: ef86676f57a643b4e807bf3c3be65fb2
