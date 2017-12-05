@@ -1578,14 +1578,13 @@ GameObject:
   - component: {fileID: 1980188425}
   - component: {fileID: 1980188424}
   - component: {fileID: 1980188423}
-  - component: {fileID: 1980188426}
   m_Layer: 0
   m_Name: Effects
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!199 &1980188423
 ParticleSystemRenderer:
   serializedVersion: 4
@@ -1697,7 +1696,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1355926404
+  randomSeed: 782085673
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -4918,17 +4917,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!122 &1980188426
-Halo:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1980188422}
-  m_Enabled: 1
-  m_Color:
-    serializedVersion: 2
-    rgba: 4294564334
-  m_Size: 200
 --- !u!1 &2053614217
 GameObject:
   m_ObjectHideFlags: 0
