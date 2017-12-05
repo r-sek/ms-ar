@@ -13,12 +13,12 @@ public class VideoScripts : MonoBehaviour, ITrackableEventHandler {
 	private Vector3 pos;
 	// Use this for initialization
 	void Start() {
+		ps.Stop ();
 		target = GameObject.FindGameObjectWithTag ("moviecanvas").GetComponent<SpriteRenderer> ();
 		var sprite = target.sprite;
 		pos = new Vector3 (sprite.bounds.extents.x,sprite.bounds.extents.y,sprite.bounds.extents.z);
 		ps.transform.position = pos;
 		mTrackableBehaviour = GetComponent<TrackableBehaviour>();
-		ps.Stop ();
 		if (mTrackableBehaviour) {
 			mTrackableBehaviour.RegisterTrackableEventHandler(this);
 		}
