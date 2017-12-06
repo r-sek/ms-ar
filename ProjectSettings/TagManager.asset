@@ -12,6 +12,7 @@ TagManager:
   - Load
   - moviecanvas
   - textBoard
+  - localTarget
   layers:
   - Default
   - TransparentFX
