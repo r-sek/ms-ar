@@ -13,8 +13,6 @@ public class DownloadImages : MonoBehaviour {
     private List<string> cacheImages;
     private string tempDir = "";
     private ReactiveProperty<Love> viewLove;
-
-
     void Start() {
         count = 0;
         loves = new List<Love>();
@@ -77,8 +75,7 @@ public class DownloadImages : MonoBehaviour {
         var scale = scaleX > scaleY ? scaleX : scaleY;
 
         GameObject.FindGameObjectWithTag("target").transform.localScale = new Vector3(scale, scale, 1.0f);
-
-        messageTextMesh.text = loves[count].Message;
+	    messageTextMesh.text = loves[count].Message;
         count++;
     }
 
