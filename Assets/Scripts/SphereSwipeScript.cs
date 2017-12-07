@@ -11,6 +11,15 @@ public class SphereSwipeScript : MonoBehaviour {
 	void OnEnable() {
 		mainCamera = Camera.main;
 		swipeGesture = GetComponent<SwipeGesture>();
+
+		swipeGesture.OnTap.Subscribe(_ => {
+			Debug.Log("tap");
+		});
+
+		swipeGesture.OnDoubletap.Subscribe(_ => {
+			Debug.Log("double tap");
+		});
+		
 		swipeGesture.OnSwipeRight
 			.Subscribe(_ => {
 				newAngle = mainCamera.transform.localEulerAngles;

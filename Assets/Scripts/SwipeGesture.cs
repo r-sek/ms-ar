@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
@@ -7,6 +8,7 @@ public class SwipeGesture : MonoBehaviour {
     private float thresholdSecond = 1.0f;
     private float thresholdDistance = 100.0f;
     private DateTime starttime;
+    private DateTime tapTime;
     private Vector2 startPosition;
 
     private Subject<Unit> onSwipeLeft = new Subject<Unit>();
@@ -21,6 +23,12 @@ public class SwipeGesture : MonoBehaviour {
     private Subject<Unit> onSwipeUp = new Subject<Unit>();
     public UniRx.IObservable<Unit> OnSwipeUp => onSwipeUp;
 
+    private Subject<Unit> onTap = new Subject<Unit>();
+    public UniRx.IObservable<Unit> OnTap => onTap;
+
+    private Subject<Unit> onDoubleTap = new Subject<Unit>();
+    public UniRx.IObservable<Unit> OnDoubletap => onDoubleTap;
+
 
     void OnEnable() {
         var eventTrigger = gameObject.AddComponent<ObservableEventTrigger>();
@@ -34,13 +42,39 @@ public class SwipeGesture : MonoBehaviour {
                 starttime = DateTime.Now;
             });
 
+        var tap = eventTrigger.OnPointerUpAsObservable()
+            .TakeUntilDisable(this)
+            .Throttle(TimeSpan.FromMilliseconds(200))
+            .Where(eventData => eventData.pointerPress.gameObject == gameObject)
+            .Where(eventData => !eventData.dragging)
+            .Select(eventData => eventData.clickCount);
+        
+        // シングルタップ
+        tap.Where(count=> count ==1)
+            .Subscribe(_ => onTap.OnNext(Unit.Default));
+        //ダブルタップ
+        tap.Where(count => count == 2)
+            .Subscribe(_ => onDoubleTap.OnNext(Unit.Default));
+            
+//        //ダブルタップ
+//        eventTrigger.OnPointerUpAsObservable()
+//            .TakeUntilDisable(this)
+//            .Where(eventData => eventData.pointerPress.gameObject == gameObject)
+//            .Where(eventData => !eventData.dragging)
+//            .TimeInterval()
+//            .Select(i => i.Interval)
+//            .Buffer(2)
+//            .Where(i => i.First().TotalMilliseconds > 1000)
+//            .Where(l => l.Skip(1).All(i => i.TotalMilliseconds < 1000))
+//            .Subscribe(_ => onDoubleTap.OnNext(Unit.Default));
+
+
         var onEndDragObservable = eventTrigger
             .OnEndDragAsObservable()
             .TakeUntilDisable(this)
             .Where(eventData => (DateTime.Now - starttime).TotalSeconds < thresholdSecond)
             .Select(eventData => eventData.position)
             .Share();
-
         //左
         onEndDragObservable
             .Where(position => startPosition.x > position.x)
