@@ -120,8 +120,8 @@ GameObject:
   - component: {fileID: 126260292}
   - component: {fileID: 126260294}
   - component: {fileID: 126260293}
-  - component: {fileID: 126260295}
   - component: {fileID: 126260296}
+  - component: {fileID: 126260295}
   m_Layer: 5
   m_Name: SwipeController
   m_TagString: Untagged

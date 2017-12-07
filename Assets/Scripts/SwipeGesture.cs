@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
@@ -42,20 +41,17 @@ public class SwipeGesture : MonoBehaviour {
                 starttime = DateTime.Now;
             });
 
-        var tap = eventTrigger.OnPointerUpAsObservable()
+        var tapCatch = eventTrigger.OnPointerUpAsObservable()
             .TakeUntilDisable(this)
-            .Throttle(TimeSpan.FromMilliseconds(200))
             .Where(eventData => eventData.pointerPress.gameObject == gameObject)
-            .Where(eventData => !eventData.dragging)
-            .Select(eventData => eventData.clickCount);
-        
-        // シングルタップ
-        tap.Where(count=> count ==1)
-            .Subscribe(_ => onTap.OnNext(Unit.Default));
-        //ダブルタップ
-        tap.Where(count => count == 2)
-            .Subscribe(_ => onDoubleTap.OnNext(Unit.Default));
-            
+            .Where(eventData => !eventData.dragging);
+
+        var tap = tapCatch.Buffer(tapCatch.Throttle(TimeSpan.FromMilliseconds(200)))
+            .Publish().RefCount();
+
+        tap.Where(l => l.Count == 1).Subscribe(_ => onTap.OnNext(Unit.Default));
+        tap.Where(l => l.Count == 2).Subscribe(_ => onDoubleTap.OnNext(Unit.Default));
+
 //        //ダブルタップ
 //        eventTrigger.OnPointerUpAsObservable()
 //            .TakeUntilDisable(this)
