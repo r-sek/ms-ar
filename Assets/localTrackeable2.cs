@@ -13,10 +13,10 @@ namespace Vuforia
 	/// A custom handler that implements the ITrackableEventHandler interface.
 	/// </summary>
 
-	public class localTrackable : MonoBehaviour,
+	public class localTrackeable2 : MonoBehaviour,
 	ITrackableEventHandler
 	{
-		public setImage setimage;
+		public SetImage2 setimage;
 		public MeshRenderer text;
 		public SpriteRenderer sprite;
 		public MeshRenderer board;

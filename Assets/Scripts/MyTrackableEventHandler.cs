@@ -72,9 +72,9 @@ public class MyTrackableEventHandler : MonoBehaviour, ITrackableEventHandler {
 		color.a = 0.01f;
 		target.material.color = color;
 		target.enabled = true;
-		Color alpha = new Color (0f,0f,0f,0.01f);
+		Color alpha = new Color (0f,0f,0f,0.05f);
 		for (; target.material.color.a < 1; target.material.color += alpha) {
-			yield return new WaitForSeconds (0.02f);
+			yield return new WaitForSeconds (0.001f);
 		}
 	}
 	private IEnumerator Fadeout(){
@@ -82,9 +82,9 @@ public class MyTrackableEventHandler : MonoBehaviour, ITrackableEventHandler {
 		text.enabled = false;
 		var color = target.color;
 		target.material.color = color;
-		Color alpha = new Color (0f,0f,0f,0.01f);
+		Color alpha = new Color (0f,0f,0f,0.05f);
 		for(;target.material.color.a > 0;target.material.color -= alpha){
-			yield return new WaitForSeconds (0.015f);
+			yield return new WaitForSeconds (0.001f);
 		}
 		target.enabled = false;
 	}
