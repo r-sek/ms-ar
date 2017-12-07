@@ -6,18 +6,26 @@ public class MyTrackableEventHandler : MonoBehaviour, ITrackableEventHandler {
     private TrackableBehaviour mTrackableBehaviour;
 	public ParticleSystem ps;
 	public DownloadImages downloadimage;
+	public GameObject cube;
+	private Sprite sprite;
 	private SpriteRenderer target;
 	private MeshRenderer text;
+	private MeshRenderer textCanvas;
 	private Vector3 pos;
+	private Vector3 posMax;
+	private Coroutine fadein;
+	private Coroutine fadeout;
+	private Coroutine movie;
     // Use this for initialization
     void Start() {
+		ps.Stop ();
+		textCanvas = cube.GetComponent<MeshRenderer> ();
 		target = GameObject.Find ("Sprite").GetComponent<SpriteRenderer> ();
 		text = GameObject.Find ("message").GetComponent<MeshRenderer> ();
-		var sprite = target.sprite;
+		sprite = target.sprite;
 		pos = new Vector3 (sprite.bounds.extents.x,sprite.bounds.extents.y,sprite.bounds.extents.z);
 		ps.transform.position = pos;
         mTrackableBehaviour = GetComponent<TrackableBehaviour>();
-		ps.Stop ();
         if (mTrackableBehaviour) {
             mTrackableBehaviour.RegisterTrackableEventHandler(this);
         }
@@ -35,20 +43,22 @@ public class MyTrackableEventHandler : MonoBehaviour, ITrackableEventHandler {
     }
 
     private void OnTrackingFound() {
-		StopCoroutine (Fadeout());
-		StartCoroutine (Fadein());
-		StartCoroutine (movie());
+		StopCoroutine (fadeout);
+		fadein = StartCoroutine (Fadein());
+		movie = StartCoroutine (Movie());
         Debug.Log("Trackable " + mTrackableBehaviour.TrackableName + " found");
     }
 
     private void OnTrackingLost() {
-		StopCoroutine (Fadein());
-		StopCoroutine (movie());
-        StartCoroutine (Fadeout());
+		if (fadein != null) {
+			StopCoroutine (fadein);
+			StopCoroutine (movie);
+		}
+        fadeout = StartCoroutine (Fadeout());
         Debug.Log("Trackable " + mTrackableBehaviour.TrackableName + " lost");
     }
 
-	private IEnumerator movie(){
+	private IEnumerator Movie(){
 		ps.Play ();
 		yield return new WaitForSeconds (1.0f);
 		ps.Stop ();
@@ -56,17 +66,20 @@ public class MyTrackableEventHandler : MonoBehaviour, ITrackableEventHandler {
 	}
 	private IEnumerator Fadein(){
 		downloadimage.Texturechange();
+		textCanvas.enabled = true;
+		text.enabled = true;
 		var color = target.color;
 		color.a = 0.01f;
 		target.material.color = color;
 		target.enabled = true;
 		Color alpha = new Color (0f,0f,0f,0.01f);
 		for (; target.material.color.a < 1; target.material.color += alpha) {
-			yield return new WaitForSeconds (0.015f);
+			yield return new WaitForSeconds (0.02f);
 		}
-		text.enabled = true;
 	}
 	private IEnumerator Fadeout(){
+		textCanvas.enabled = false;
+		text.enabled = false;
 		var color = target.color;
 		target.material.color = color;
 		Color alpha = new Color (0f,0f,0f,0.01f);
@@ -74,6 +87,5 @@ public class MyTrackableEventHandler : MonoBehaviour, ITrackableEventHandler {
 			yield return new WaitForSeconds (0.015f);
 		}
 		target.enabled = false;
-		text.enabled = false;
 	}
 }

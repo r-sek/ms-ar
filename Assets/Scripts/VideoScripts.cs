@@ -7,17 +7,18 @@ public class VideoScripts : MonoBehaviour, ITrackableEventHandler {
 	private TrackableBehaviour mTrackableBehaviour;
 	public ParticleSystem ps;
 	public VideoPlayer vp;
-	private SpriteRenderer target;
-	private Vector3 pos;
+	public SpriteRenderer target;
+	private Coroutine fadeout;
 
+	private Vector3 pos;
 	// Use this for initialization
 	void Start() {
-		target = GameObject.Find ("Sprite").GetComponent<SpriteRenderer> ();
+		ps.Stop ();
+		target = GameObject.FindGameObjectWithTag ("moviecanvas").GetComponent<SpriteRenderer> ();
 		var sprite = target.sprite;
 		pos = new Vector3 (sprite.bounds.extents.x,sprite.bounds.extents.y,sprite.bounds.extents.z);
 		ps.transform.position = pos;
 		mTrackableBehaviour = GetComponent<TrackableBehaviour>();
-		ps.Stop ();
 		if (mTrackableBehaviour) {
 			mTrackableBehaviour.RegisterTrackableEventHandler(this);
 		}
@@ -35,16 +36,18 @@ public class VideoScripts : MonoBehaviour, ITrackableEventHandler {
 	}
 
 	private void OnTrackingFound() {
+		StopCoroutine (fadeout);
+		StartCoroutine (movie());
+		Color alpha = new Color (0f, 0f, 0f, 1f);
+		target.material.color += alpha;
 		target.enabled = true;
 		vp.Play ();
-		StopCoroutine (Fadeout());
-		StartCoroutine (movie());
 		Debug.Log("Trackable " + mTrackableBehaviour.TrackableName + " found");
 	}
 
 	private void OnTrackingLost() {
 		StopCoroutine (movie());
-		StartCoroutine (Fadeout());
+		fadeout = StartCoroutine(Fadeout());
 		Debug.Log("Trackable " + mTrackableBehaviour.TrackableName + " lost");
 	}
 

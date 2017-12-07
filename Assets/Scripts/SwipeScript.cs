@@ -22,7 +22,10 @@ public class SwipeScript : MonoBehaviour {
 				StartCoroutine(ChangeScene());
             });
         swipeGesture.OnSwipeLeft
-            .Subscribe(_ => { Debug.unityLogger.Log("swipe", "左"); });
+            .Subscribe(_ => {
+		        SceneManager.LoadScene("SphereScene");
+		        Debug.unityLogger.Log("swipe", "左");
+	        });
         swipeGesture.OnSwipeDown
             .Subscribe(_ => { Debug.unityLogger.Log("swipe", "下"); });
         swipeGesture.OnSwipeUp

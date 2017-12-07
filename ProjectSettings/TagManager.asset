@@ -10,6 +10,9 @@ TagManager:
   - arcamera
   - canvas
   - Load
+  - moviecanvas
+  - textBoard
+  - localTarget
   layers:
   - Default
   - TransparentFX
