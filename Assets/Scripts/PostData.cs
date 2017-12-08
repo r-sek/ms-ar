@@ -39,7 +39,7 @@ public class PostData : MonoBehaviour {
         var progress = new ScheduledNotifier<float>();
         //progress.Subscribe(prog => Debug.Log(prog));
 
-        submitBtn.OnClickAsObservable()
+        submitBtn.OnClickAsObservable().ThrottleFirst(TimeSpan.FromMilliseconds(1000))
             .Subscribe(_ => {
                 var formdata = new WWWForm();
 
@@ -56,6 +56,7 @@ public class PostData : MonoBehaviour {
                             img.color = Color.clear;
                             postImageBytes = new byte[0];
                             inputField.text = "";
+                            text = "";
                             Debug.unityLogger.Log("result",result);
 
                             Debug.Log("success");
@@ -101,6 +102,7 @@ public class PostData : MonoBehaviour {
                     postTexture.LoadImage(postImageBytes);
 #else
                     postTexture.LoadImage(Utilities.LoadbinaryBytes(filepath));
+                    postImageBytes = Utilities.LoadbinaryBytes(filepath);
 #endif
                     Debug.unityLogger.Log("img", img);
                     img.sprite = Utilities.GetSpriteFromTexture2D(postTexture);
