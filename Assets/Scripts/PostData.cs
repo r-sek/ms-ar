@@ -24,6 +24,7 @@ public class PostData : MonoBehaviour {
 
     void Start() {
         postTexture = new Texture2D(0, 0);
+        postImageBytes = new byte[0];
         img = GameObject.Find("Canvas/Image").GetComponent<Image>();
 
         // 縦固定
@@ -39,15 +40,16 @@ public class PostData : MonoBehaviour {
         var progress = new ScheduledNotifier<float>();
         //progress.Subscribe(prog => Debug.Log(prog));
 
-        submitBtn.OnClickAsObservable().ThrottleFirst(TimeSpan.FromMilliseconds(1000))
+        submitBtn.OnClickAsObservable()
+            .ThrottleFirst(TimeSpan.FromMilliseconds(1000))
             .Subscribe(_ => {
                 var formdata = new WWWForm();
 
                 formdata.AddField("name", "gest");
-                if (text != "") {
+                if (!text.Equals(value: "")) {
                     formdata.AddField("message", text);
                 }
-                if (postImageBytes.Length != 0) {
+                if (postImageBytes.Length > 0) {
                     formdata.AddBinaryData("upload_file", postImageBytes, fileName);
                 }
                 ObservableWWW.Post(SERVER_URL, formdata, progress)
