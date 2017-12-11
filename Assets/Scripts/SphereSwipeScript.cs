@@ -1,43 +1,46 @@
-﻿
-using UniRx;
+﻿using UniRx;
 using UnityEngine;
 
 [RequireComponent(typeof(SwipeGesture))]
 public class SphereSwipeScript : MonoBehaviour {
-	private SwipeGesture swipeGesture;
-	private Camera mainCamera;
-	private Vector3 newAngle = new Vector3(0,0,0);
+    private SwipeGesture swipeGesture;
+    private Camera mainCamera;
+    private Vector3 newAngle = new Vector3(0, 0, 0);
 
-	void OnEnable() {
-		mainCamera = Camera.main;
-		swipeGesture = GetComponent<SwipeGesture>();
-		swipeGesture.OnSwipeRight
-			.Subscribe(_ => {
-				newAngle = mainCamera.transform.localEulerAngles;
-				newAngle.y += 15f;
-				mainCamera.transform.localEulerAngles = newAngle;
-				Debug.unityLogger.Log("swipe", "右");
-			});
-		swipeGesture.OnSwipeLeft
-			.Subscribe(_ => { 
-				newAngle = mainCamera.transform.localEulerAngles;
-				newAngle.y -= 15f;
-				mainCamera.transform.localEulerAngles = newAngle;
-				Debug.unityLogger.Log("swipe", "左"); 
-			});
-		swipeGesture.OnSwipeDown
-			.Subscribe(_ => { 
-				newAngle = mainCamera.transform.localEulerAngles;
-				newAngle.x += 15f;
-				mainCamera.transform.localEulerAngles = newAngle;
-				Debug.unityLogger.Log("swipe", "下"); 
-			});
-		swipeGesture.OnSwipeUp
-			.Subscribe(_ => {
-				newAngle = mainCamera.transform.localEulerAngles;
-				newAngle.x -= 15f;
-				mainCamera.transform.localEulerAngles = newAngle;
-				Debug.unityLogger.Log("swipe", "上");
-			});
-	}
+    void OnEnable() {
+        mainCamera = Camera.main;
+        swipeGesture = GetComponent<SwipeGesture>();
+
+        swipeGesture.OnDoubletap.Subscribe(_ => Debug.Log("Double tap"));
+        swipeGesture.OnTap.Subscribe(count => { Debug.Log("single Tap"); });
+
+        swipeGesture.OnSwipeRight
+            .Subscribe(_ => {
+                newAngle = mainCamera.transform.localEulerAngles;
+                newAngle.y += 15f;
+                mainCamera.transform.localEulerAngles = newAngle;
+                Debug.unityLogger.Log("swipe", "右");
+            });
+        swipeGesture.OnSwipeLeft
+            .Subscribe(_ => {
+                newAngle = mainCamera.transform.localEulerAngles;
+                newAngle.y -= 15f;
+                mainCamera.transform.localEulerAngles = newAngle;
+                Debug.unityLogger.Log("swipe", "左");
+            });
+        swipeGesture.OnSwipeDown
+            .Subscribe(_ => {
+                newAngle = mainCamera.transform.localEulerAngles;
+                newAngle.x += 15f;
+                mainCamera.transform.localEulerAngles = newAngle;
+                Debug.unityLogger.Log("swipe", "下");
+            });
+        swipeGesture.OnSwipeUp
+            .Subscribe(_ => {
+                newAngle = mainCamera.transform.localEulerAngles;
+                newAngle.x -= 15f;
+                mainCamera.transform.localEulerAngles = newAngle;
+                Debug.unityLogger.Log("swipe", "上");
+            });
+    }
 }
