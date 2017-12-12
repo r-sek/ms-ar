@@ -1,12 +1,16 @@
 ﻿using UnityEngine;
 using Vuforia;
 using System.Collections;
+using System.Collections.Generic;
 
 public class MyTrackableEventHandler : MonoBehaviour, ITrackableEventHandler {
     private TrackableBehaviour mTrackableBehaviour;
 	public ParticleSystem ps;
 	public DownloadImages downloadimage;
 	public GameObject cube;
+	public TextMesh textmesh;
+	private string textString;
+	private List<string> textArray;
 	private Sprite sprite;
 	private SpriteRenderer target;
 	private MeshRenderer text;
@@ -23,7 +27,7 @@ public class MyTrackableEventHandler : MonoBehaviour, ITrackableEventHandler {
 		target = GameObject.Find ("Sprite").GetComponent<SpriteRenderer> ();
 		text = GameObject.Find ("message").GetComponent<MeshRenderer> ();
 		sprite = target.sprite;
-		pos = new Vector3 (sprite.bounds.extents.x,sprite.bounds.extents.y,sprite.bounds.extents.z);
+		pos = new Vector3 (sprite.bounds.extents.x,sprite.bounds.extents.y - 0.2f,sprite.bounds.extents.z);
 		ps.transform.position = pos;
         mTrackableBehaviour = GetComponent<TrackableBehaviour>();
         if (mTrackableBehaviour) {
@@ -66,6 +70,21 @@ public class MyTrackableEventHandler : MonoBehaviour, ITrackableEventHandler {
 	}
 	private IEnumerator Fadein(){
 		downloadimage.Texturechange();
+		textArray = new List<string>();
+		textString = textmesh.text;
+		while(textString.Length > 8){
+			Debug.Log (textString);
+			textArray.Add (textString.Substring(0,8));
+			textString = textString.Substring (8);
+		}
+		if (textArray != null) {
+			textArray.Add (textString);
+			textString = "";
+			for (int i = 0; i < textArray.Count; i++) {
+				textString = textString + textArray [i] + "\n";
+			}
+		}
+		textmesh.text = textString;
 		textCanvas.enabled = true;
 		text.enabled = true;
 		var color = target.color;
