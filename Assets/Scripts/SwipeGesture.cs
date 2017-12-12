@@ -27,6 +27,9 @@ public class SwipeGesture : MonoBehaviour {
 
     private Subject<Unit> onDoubleTap = new Subject<Unit>();
     public UniRx.IObservable<Unit> OnDoubletap => onDoubleTap;
+    
+    private Subject<Unit> onLongTap = new Subject<Unit>();
+    public UniRx.IObservable<Unit> OnLongTap => onLongTap;
 
 
     void OnEnable() {
@@ -40,29 +43,31 @@ public class SwipeGesture : MonoBehaviour {
                 startPosition = position;
                 starttime = DateTime.Now;
             });
+        eventTrigger.OnPointerDownAsObservable()
+            .TakeUntilDisable(this)
+            .Subscribe(_ => tapTime = DateTime.Now);
 
+        eventTrigger.OnPointerDownAsObservable()
+            .SelectMany(_ => Observable.Timer(TimeSpan.FromSeconds(1)))
+            .TakeUntil(eventTrigger.OnPointerUpAsObservable())
+            .RepeatUntilDisable(gameObject)
+            .Subscribe(eventData => {
+                onLongTap.OnNext(Unit.Default);
+            });
+        
         var tapCatch = eventTrigger.OnPointerUpAsObservable()
             .TakeUntilDisable(this)
             .Where(eventData => eventData.pointerPress.gameObject == gameObject)
-            .Where(eventData => !eventData.dragging);
+            .Where(eventData => !eventData.dragging)
+            .Where(_=> (DateTime.Now - tapTime).TotalSeconds < thresholdSecond);
+        
 
-        var tap = tapCatch.Buffer(tapCatch.Throttle(TimeSpan.FromMilliseconds(200)))
-            .Publish().RefCount();
+        var tap = tapCatch
+            .Buffer(tapCatch.Throttle(TimeSpan.FromMilliseconds(200)))
+            .Share();
 
         tap.Where(l => l.Count == 1).Subscribe(_ => onTap.OnNext(Unit.Default));
         tap.Where(l => l.Count == 2).Subscribe(_ => onDoubleTap.OnNext(Unit.Default));
-
-//        //ダブルタップ
-//        eventTrigger.OnPointerUpAsObservable()
-//            .TakeUntilDisable(this)
-//            .Where(eventData => eventData.pointerPress.gameObject == gameObject)
-//            .Where(eventData => !eventData.dragging)
-//            .TimeInterval()
-//            .Select(i => i.Interval)
-//            .Buffer(2)
-//            .Where(i => i.First().TotalMilliseconds > 1000)
-//            .Where(l => l.Skip(1).All(i => i.TotalMilliseconds < 1000))
-//            .Subscribe(_ => onDoubleTap.OnNext(Unit.Default));
 
 
         var onEndDragObservable = eventTrigger
