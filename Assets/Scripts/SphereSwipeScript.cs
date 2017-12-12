@@ -1,5 +1,6 @@
 ﻿using UniRx;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Video;
 
 [RequireComponent(typeof(SwipeGesture))]
@@ -22,9 +23,14 @@ public class SphereSwipeScript : MonoBehaviour {
             Debug.Log("Double tap");
             ChangeVideo();
         });
-        swipeGesture.OnTap.Subscribe(count => {
+        swipeGesture.OnTap.Subscribe(_ => {
             Debug.Log("single Tap");
             Play();
+        });
+
+        swipeGesture.OnLongTap.Subscribe(_ => {
+            Debug.Log("long tap");
+            SceneManager.LoadScene("MainView");
         });
 
         swipeGesture.OnSwipeRight
