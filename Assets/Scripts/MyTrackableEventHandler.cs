@@ -27,7 +27,7 @@ public class MyTrackableEventHandler : MonoBehaviour, ITrackableEventHandler {
 		target = GameObject.Find ("Sprite").GetComponent<SpriteRenderer> ();
 		text = GameObject.Find ("message").GetComponent<MeshRenderer> ();
 		sprite = target.sprite;
-		pos = new Vector3 (sprite.bounds.extents.x,sprite.bounds.extents.y,sprite.bounds.extents.z);
+		pos = new Vector3 (sprite.bounds.extents.x,sprite.bounds.extents.y - 0.2f,sprite.bounds.extents.z);
 		ps.transform.position = pos;
         mTrackableBehaviour = GetComponent<TrackableBehaviour>();
         if (mTrackableBehaviour) {
