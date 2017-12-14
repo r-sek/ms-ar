@@ -11,7 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/UploadScene.unity
     guid: 21e01b12111a64839b7072bc9bbfd36e
-  - enabled: 0
+  - enabled: 1
     path: Assets/iOSUploadScene.unity
     guid: 26a255b5abb224f8181711a442364cc2
   - enabled: 1
