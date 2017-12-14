@@ -74,7 +74,7 @@ public class start : MonoBehaviour {
 				result => { Debug.Log("success");}
 				,error => { Debug.Log("ng");}
 			);
-		ChangeImage ();
+		SceneManager.LoadScene ("MainView");
 	}
 	public void returnView(){
 		SceneManager.LoadScene ("MainView");
