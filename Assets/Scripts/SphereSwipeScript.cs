@@ -1,6 +1,5 @@
 ﻿using UniRx;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.Video;
 
 [RequireComponent(typeof(SwipeGesture))]
@@ -9,28 +8,19 @@ public class SphereSwipeScript : MonoBehaviour {
     private Camera mainCamera;
     private Vector3 newAngle = new Vector3(0, 0, 0);
     private VideoPlayer videoPlayer;
-    private int index = 0;
-    private Object[] videoClips;
 
     void OnEnable() {
         mainCamera = Camera.main;
         swipeGesture = GetComponent<SwipeGesture>();
         videoPlayer = GameObject.Find("/Sphere").GetComponent<VideoPlayer>();
 
-        videoClips = Resources.LoadAll("Movies", typeof(VideoClip));
-
         swipeGesture.OnDoubletap.Subscribe(_ => {
             Debug.Log("Double tap");
             ChangeVideo();
         });
-        swipeGesture.OnTap.Subscribe(_ => {
+        swipeGesture.OnTap.Subscribe(count => {
             Debug.Log("single Tap");
             Play();
-        });
-
-        swipeGesture.OnLongTap.Subscribe(_ => {
-            Debug.Log("long tap");
-            SceneManager.LoadScene("MainView");
         });
 
         swipeGesture.OnSwipeRight
@@ -75,7 +65,5 @@ public class SphereSwipeScript : MonoBehaviour {
     public void ChangeVideo() {
         videoPlayer.Stop();
         // resourceの切り替え
-        videoPlayer.clip = videoClips[index % 2] as VideoClip;
-        index++;
     }
 }
