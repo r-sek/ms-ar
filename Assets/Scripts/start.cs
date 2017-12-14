@@ -49,7 +49,7 @@ public class start : MonoBehaviour {
 		image.sprite = sprite;
 		imageBinary = Utilities.LoadbinaryBytes (path);
 		var f = new FileInfo (path);
-		filename = f.Name;
+		filename = f.Name+".jpg";
 	}
 	public void ChangeImage(){
 		#if UNITY_IOS
