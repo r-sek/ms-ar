@@ -8,6 +8,7 @@ public class VideoScripts : MonoBehaviour, ITrackableEventHandler {
 	public ParticleSystem ps;
 	public VideoPlayer vp;
 	public SpriteRenderer target;
+	private Coroutine movie;
 	private Coroutine fadeout;
 
 	private Vector3 pos;
@@ -36,8 +37,10 @@ public class VideoScripts : MonoBehaviour, ITrackableEventHandler {
 	}
 
 	private void OnTrackingFound() {
-		StopCoroutine (fadeout);
-		StartCoroutine (movie());
+		if(fadeout != null){
+			StopCoroutine (fadeout);
+		}
+		movie = StartCoroutine (Movie());
 		Color alpha = new Color (0f, 0f, 0f, 1f);
 		target.material.color += alpha;
 		target.enabled = true;
@@ -46,12 +49,15 @@ public class VideoScripts : MonoBehaviour, ITrackableEventHandler {
 	}
 
 	private void OnTrackingLost() {
-		StopCoroutine (movie());
+		if(movie != null){
+			StopCoroutine (movie);
+		}
+
 		fadeout = StartCoroutine(Fadeout());
 		Debug.Log("Trackable " + mTrackableBehaviour.TrackableName + " lost");
 	}
 
-	private IEnumerator movie(){
+	private IEnumerator Movie(){
 		ps.Play ();
 		yield return new WaitForSeconds (1.0f);
 		ps.Stop ();
