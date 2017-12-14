@@ -2,9 +2,9 @@ import UIKit
 
 open class CameraRollViewController: UIViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
     
-    static var filePath = "";
+    @objc static var filePath = "";
     
-    open func open(_ path: String) {
+    @objc open func open(_ path: String) {
         CameraRollViewController.filePath = path
         if UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.photoLibrary) {
             
@@ -32,7 +32,7 @@ open class CameraRollViewController: UIViewController, UINavigationControllerDel
         picker.dismiss(animated: true, completion: nil)
     }
     // 縦にとると横で保存されているのでオリエンテーションを修正する
-    func fixOrientation(_ image: UIImage) -> UIImage {
+    @objc func fixOrientation(_ image: UIImage) -> UIImage {
         if (image.imageOrientation == UIImageOrientation.up) {
             return image;
         }

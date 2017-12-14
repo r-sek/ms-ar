@@ -72,18 +72,33 @@ public class MyTrackableEventHandler : MonoBehaviour, ITrackableEventHandler {
 		downloadimage.Texturechange();
 		textArray = new List<string>();
 		textString = textmesh.text;
-		while(textString.Length > 8){
-			Debug.Log (textString);
-			textArray.Add (textString.Substring(0,8));
-			textString = textString.Substring (8);
+		string[] array = textString.Split('\n');
+		int maxstrLength = 0;
+		foreach(string str in array){
+			textCanvas.transform.localScale = new Vector3 (1f,0.01f,0.6f);
+			text.transform.localPosition = new Vector3 (-0.4f,0.7f,-0.15f);
+			if (str.Length > 8 && maxstrLength < str.Length) {
+				maxstrLength = str.Length;
+				float size = str.Length * 0.13f;
+				Vector3 posi = text.transform.position;
+				textCanvas.transform.localScale = new Vector3 (size, 0.01f, 0.6f);
+				posi.x -= str.Length * 9.5f;
+				Debug.Log (posi);
+				text.transform.position = posi;
+			} 
 		}
-		if (textArray != null) {
-			textArray.Add (textString);
-			textString = "";
-			for (int i = 0; i < textArray.Count; i++) {
-				textString = textString + textArray [i] + "\n";
-			}
-		}
+//		while(textString.Length < 8){
+//			Debug.Log (textString);
+//			textArray.Add (textString.Substring(0,8));
+//			textString = textString.Substring (8);
+//		}
+//		if (textArray != null) {
+//			textArray.Add (textString);
+//			textString = "";
+//			for (int i = 0; i < textArray.Count; i++) {
+//				textString = textString + textArray [i] + "\n";
+//			}
+//		}
 		textmesh.text = textString;
 		textCanvas.enabled = true;
 		text.enabled = true;

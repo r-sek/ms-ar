@@ -249,8 +249,13 @@ PlayerSettings:
     m_Devices:
     - OpenVR
     - Oculus
+  - m_BuildTarget: iOS
+    m_Enabled: 1
+    m_Devices: []
   m_BuildTargetEnableVuforiaSettings:
   - m_BuildTarget: Standalone
+    m_Enabled: 1
+  - m_BuildTarget: iOS
     m_Enabled: 1
   openGLRequireES31: 0
   openGLRequireES31AEP: 0
