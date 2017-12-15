@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <QCARConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="qcar_config.xsd">
   <Tracking>
-    <ImageTarget name="Marker2" size="200.000000 200.000000" />
+    <ImageTarget name="Marker" size="200.000000 200.000000" />
     <ImageTarget name="Marker5" size="200.000000 145.112778" />
     <ImageTarget name="Marker4" size="200.000000 114.375000" />
     <ImageTarget name="Marker3" size="200.000000 146.875000" />
