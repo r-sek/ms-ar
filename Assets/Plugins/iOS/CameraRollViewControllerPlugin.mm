@@ -1,5 +1,5 @@
 #import <UIKit/UIKit.h>
-#import <ProductName-Swift.h>
+#import <takuyaNarutaki-Swift.h>
 
 extern "C" {
     void OpenCameraRoll(const char *path) {

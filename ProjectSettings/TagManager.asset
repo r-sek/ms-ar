@@ -13,6 +13,9 @@ TagManager:
   - moviecanvas
   - textBoard
   - localTarget
+  - inputField
+  - retBtn
+  - audiosource
   layers:
   - Default
   - TransparentFX

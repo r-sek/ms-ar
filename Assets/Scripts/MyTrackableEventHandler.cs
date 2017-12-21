@@ -8,6 +8,7 @@ public class MyTrackableEventHandler : MonoBehaviour, ITrackableEventHandler {
 	public ParticleSystem ps;
 	public DownloadImages downloadimage;
 	public GameObject cube;
+	public AudioSource audio;
 	public TextMesh textmesh;
 	private string textString;
 	private List<string> textArray;
@@ -65,6 +66,7 @@ public class MyTrackableEventHandler : MonoBehaviour, ITrackableEventHandler {
     }
 
 	private IEnumerator Movie(){
+		audio.Play ();
 		ps.Play ();
 		yield return new WaitForSeconds (1.0f);
 		ps.Stop ();
