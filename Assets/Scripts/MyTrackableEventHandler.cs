@@ -48,6 +48,7 @@ public class MyTrackableEventHandler : MonoBehaviour, ITrackableEventHandler {
     }
 
     private void OnTrackingFound() {
+		audio.Play ();
 		if (fadeout != null) {
 			StopCoroutine (fadeout);
 		}
@@ -66,7 +67,6 @@ public class MyTrackableEventHandler : MonoBehaviour, ITrackableEventHandler {
     }
 
 	private IEnumerator Movie(){
-		audio.Play ();
 		ps.Play ();
 		yield return new WaitForSeconds (1.0f);
 		ps.Stop ();

@@ -905,6 +905,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd8af324ac838463a9cac6ae76635f71, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  audio: {fileID: 665984539}
   setimage: {fileID: 522935731}
   text: {fileID: 827485109}
   sprite: {fileID: 1273785533}
@@ -2803,6 +2804,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c1a6abdecfd74b698487215e3a25aa9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  audio: {fileID: 665984539}
   setimage: {fileID: 1949357328}
   text: {fileID: 252893917}
   sprite: {fileID: 258823520}
@@ -2939,7 +2941,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 592952639
+  randomSeed: 212974310
   InitialModule:
     serializedVersion: 3
     enabled: 1
