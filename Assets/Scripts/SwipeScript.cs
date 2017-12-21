@@ -35,6 +35,7 @@ public class SwipeScript : MonoBehaviour {
 	private IEnumerator ChangeScene(){
 		int i = 0;
 		#if UNITY_IOS
+		Screen.orientation = ScreenOrientation.Portrait;
 		async = SceneManager.LoadSceneAsync("iOSUploadScene");
 		while(!async.isDone){
 			yield return new WaitForSeconds(0.5f);

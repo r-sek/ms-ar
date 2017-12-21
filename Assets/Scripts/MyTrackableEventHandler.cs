@@ -8,6 +8,7 @@ public class MyTrackableEventHandler : MonoBehaviour, ITrackableEventHandler {
 	public ParticleSystem ps;
 	public DownloadImages downloadimage;
 	public GameObject cube;
+	public AudioSource audio;
 	public TextMesh textmesh;
 	private string textString;
 	private List<string> textArray;
@@ -47,6 +48,7 @@ public class MyTrackableEventHandler : MonoBehaviour, ITrackableEventHandler {
     }
 
     private void OnTrackingFound() {
+		audio.Play ();
 		if (fadeout != null) {
 			StopCoroutine (fadeout);
 		}
