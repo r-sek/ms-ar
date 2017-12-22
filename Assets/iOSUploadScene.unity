@@ -262,7 +262,7 @@ GameObject:
   - component: {fileID: 649274663}
   m_Layer: 5
   m_Name: InputField
-  m_TagString: Untagged
+  m_TagString: inputField
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -613,7 +613,7 @@ GameObject:
   - component: {fileID: 1338885214}
   m_Layer: 5
   m_Name: ReturnBtn
-  m_TagString: Untagged
+  m_TagString: retBtn
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -869,7 +869,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1705279564}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 240.42847, y: 317, z: 0}
+  m_LocalPosition: {x: 427.71423, y: 317, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 874088579}

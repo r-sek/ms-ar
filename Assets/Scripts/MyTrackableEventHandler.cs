@@ -8,6 +8,7 @@ public class MyTrackableEventHandler : MonoBehaviour, ITrackableEventHandler {
 	public ParticleSystem ps;
 	public DownloadImages downloadimage;
 	public GameObject cube;
+	public AudioSource audio;
 	public TextMesh textmesh;
 	private string textString;
 	private List<string> textArray;
@@ -47,7 +48,10 @@ public class MyTrackableEventHandler : MonoBehaviour, ITrackableEventHandler {
     }
 
     private void OnTrackingFound() {
-		StopCoroutine (fadeout);
+		audio.Play ();
+		if (fadeout != null) {
+			StopCoroutine (fadeout);
+		}
 		fadein = StartCoroutine (Fadein());
 		movie = StartCoroutine (Movie());
         Debug.Log("Trackable " + mTrackableBehaviour.TrackableName + " found");
@@ -87,18 +91,6 @@ public class MyTrackableEventHandler : MonoBehaviour, ITrackableEventHandler {
 				text.transform.position = posi;
 			} 
 		}
-//		while(textString.Length < 8){
-//			Debug.Log (textString);
-//			textArray.Add (textString.Substring(0,8));
-//			textString = textString.Substring (8);
-//		}
-//		if (textArray != null) {
-//			textArray.Add (textString);
-//			textString = "";
-//			for (int i = 0; i < textArray.Count; i++) {
-//				textString = textString + textArray [i] + "\n";
-//			}
-//		}
 		textmesh.text = textString;
 		textCanvas.enabled = true;
 		text.enabled = true;

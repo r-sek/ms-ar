@@ -20,15 +20,17 @@ public class start : MonoBehaviour {
 	public Image image;
 	// Use this for initialization
 	void Start () {
-
 		ChangeImage ();
-		var inputField = GameObject.Find("Canvas/InputField").GetComponent<InputField>();
-		var returnBtn = GameObject.Find ("Canvas/ReturnBtn").GetComponent<Button> ();
+		var inputField = GameObject.FindGameObjectWithTag ("inputField").GetComponent<InputField> ();
+		//var inputField = GameObject.Find("Canvas/InputField").GetComponent<InputField>();
+		var returnBtn = GameObject.FindGameObjectWithTag ("retBtn").GetComponent<Button> ();
 
-
+		Debug.Log (inputField);
 		inputField.OnEndEditAsObservable()
 			.Subscribe(
-				s => { text = s; }
+				s => { text = s; 
+					Debug.Log(text);
+				}
 			);
 		
 		returnBtn.OnClickAsObservable()
@@ -63,7 +65,7 @@ public class start : MonoBehaviour {
 		var formdata = new WWWForm();
 
 		formdata.AddField("name", "gest");
-		if (text != "") {
+		if (!text.Equals("")) {
 			formdata.AddField("message", text);
 		}
 		if (imageBinary.Length != 0) {

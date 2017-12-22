@@ -16,6 +16,7 @@ namespace Vuforia
 	public class localTrackable : MonoBehaviour,
 	ITrackableEventHandler
 	{
+		public AudioSource audio;
 		public setImage setimage;
 		public MeshRenderer text;
 		public SpriteRenderer sprite;
@@ -78,6 +79,7 @@ namespace Vuforia
 
 		private void OnTrackingFound()
 		{
+			audio.Play ();
 			movie = StartCoroutine (Movie());
 			setimage.Texturechange ();
 			text.enabled = true;

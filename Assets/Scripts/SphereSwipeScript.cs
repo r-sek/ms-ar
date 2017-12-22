@@ -78,4 +78,8 @@ public class SphereSwipeScript : MonoBehaviour {
         videoPlayer.clip = videoClips[index % 2] as VideoClip;
         index++;
     }
+
+    void Start() {
+        Screen.orientation = ScreenOrientation.Landscape;
+    }
 }
