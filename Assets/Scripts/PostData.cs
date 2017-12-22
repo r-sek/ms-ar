@@ -25,13 +25,13 @@ public class PostData : MonoBehaviour {
     void Start() {
         postTexture = new Texture2D(0, 0);
         postImageBytes = new byte[0];
-        img = GameObject.Find("Canvas/Image").GetComponent<Image>();
+        img = GameObject.Find("Canvas/UploadArea/Viewport/Content1/Image").GetComponent<Image>();
 
         // 縦固定
         Screen.orientation = ScreenOrientation.Portrait;
 
         var submitBtn = GameObject.Find("Canvas/SubmitBtn").GetComponent<Button>();
-        var inputField = GameObject.Find("Canvas/InputField").GetComponent<InputField>();
+        var inputField = GameObject.Find("Canvas/UploadArea/Viewport/Content1/InputField").GetComponent<InputField>();
 
         var returnBtn = GameObject.Find("Canvas/ReturnBtn").GetComponent<Button>();
         var dirPath = GetDirPath();
