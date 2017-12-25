@@ -52,6 +52,8 @@ public class PostData : MonoBehaviour {
                 if (postImageBytes.Length > 0) {
                     formdata.AddBinaryData("upload_file", postImageBytes, fileName);
                 }
+				Debug.Log(PlayerPrefs.GetString("init"));
+				formdata.AddField("user_id",PlayerPrefs.GetString ("Init"));
                 ObservableWWW.Post(SERVER_URL, formdata, progress)
                     .Subscribe(
                         result => {
